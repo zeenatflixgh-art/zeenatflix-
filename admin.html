@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CEO Admin - ZEENATFLIX</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;padding:15px}
+input,textarea,select{width:95%;padding:12px;margin:8px 0;border-radius:10px;border:none}
+textarea{height:120px}
+.btn{background:#00ff88;color:#000;padding:14px 30px;border-radius:25px;border:none;font-weight:bold;margin:10px;font-size:16px}
+.btn2{background:#ff0055;color:#fff;padding:14px 30px;border-radius:25px;border:none;font-weight:bold}
+.card{background:#111;padding:15px;border-radius:15px;margin:10px 0}
+h1{color:#ff0055}
+</style>
+</head>
+<body>
+<div id="login">
+<h1>🔐 CEO ADMIN ONLY</h1>
+<input id="pass" type="password" placeholder="Enter CEO Password">
+<br><button class="btn" onclick="unlock()">Unlock Admin</button>
+</div>
+
+<div id="panel" style="display:none">
+<h1>👑 ZEENATFLIX CEO PANEL</h1>
+<a href="index.html" style="color:#00ff88">⬅ Back to Site</a> | <a href="world.html" style="color:#00ff88">View World Page 🌍</a>
+
+<div class="card">
+<h3>📝 Create Movie + Post to World</h3>
+<input id="title" placeholder="Movie Title e.g. THE RIVER BRIDE">
+<input id="image" placeholder="Image file e.g. THE-RIVER-BRIDE.jpg">
+<input id="views" placeholder="Views e.g. 2.5M">
+<input id="likes" placeholder="Likes e.g. 180K">
+<input id="comments" placeholder="Comments e.g. 12K">
+<textarea id="story" placeholder="Write FULL STORY here... full page story..."></textarea>
+<textarea id="subs" placeholder="Write Subtitles (English / Twi) here..."></textarea>
+<br>
+<button class="btn" onclick="postToWorld()">🌍 Post to World Page</button>
+<button class="btn2" onclick="addToMain()">➕ Add to Main Netflix</button>
+</div>
+
+<div class="card">
+<h3>🌍 World Posts (Saved on your phone)</h3>
+<div id="list"></div>
+<button class="btn2" onclick="clearWorld()">Clear World Posts</button>
+</div>
+
+<div class="card">
+<h3>📋 Code to copy to world.html for EVERYONE to see (Permanent)</h3>
+<p style="font-size:12px;color:#aaa">Because GitHub is static, for all Facebook people to see your world post forever, copy this code and paste inside world.html</p>
+<textarea id="code" style="height:200px"></textarea>
+</div>
+</div>
+
+<script>
+function unlock(){
+if(document.getElementById("pass").value==="zeenat6869"){
+document.getElementById("login").style.display="none";
+document.getElementById("panel").style.display="block";
+show();
+}else{alert("Wrong password CEO!")}
+}
+function postToWorld(){
+let t=title.value,l=image.value,s=story.value,sub=subs.value,v=views.value,lk=likes.value,c=comments.value;
+if(!t||!s){alert("Add Title and Story");return}
+let posts=JSON.parse(localStorage.getItem("worldPosts")||"[]");
+posts.unshift({title:t,image:l,story:s,subs:sub,views:v,likes:lk,comments:c,date:new Date().toLocaleString()});
+localStorage.setItem("worldPosts",JSON.stringify(posts));
+alert("✅ Posted to World! Now go check World Page!");
+show();
+let html=`<div class="card"><img src="${l}" style="width:100%;border-radius:10px"><h2>${t}</h2><p>👁️ ${v} | ❤️ ${lk} | 💬 ${c}</p><p>${s}</p><p><b>Subtitles:</b> ${sub}</p><small>${new Date().toLocaleString()}</small></div>`;
+document.getElementById("code").value=html;
+}
+function addToMain(){alert("To add to main Netflix, add image to GitHub and it will auto show - you already have 19!")}
+function show(){
+let posts=JSON.parse(localStorage.getItem("worldPosts")||"[]");
+let h="";
+posts.forEach((p,i)=>{h+=`<div class="card"><b>${p.title}</b> - ${p.date}<br><button onclick="del(${i})">Delete</button></div>`});
+document.getElementById("list").innerHTML=h||"No posts yet";
+}
+function del(i){
+let posts=JSON.parse(localStorage.getItem("worldPosts")||"[]");
+posts.splice(i,1);
+localStorage.setItem("worldPosts",JSON.stringify(posts));
+show();
+}
+function clearWorld(){if(confirm("Clear all?")){localStorage.removeItem("worldPosts");show()}}
+</script>
+</body>
+</html>
