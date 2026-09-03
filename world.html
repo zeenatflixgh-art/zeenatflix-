@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Trending - ZEENATFLIX</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;padding:15px;text-align:center}
+.card{background:#111;padding:15px;border-radius:15px;margin:15px auto;max-width:500px;text-align:left}
+.card img{width:100%;border-radius:10px;max-height:300px;object-fit:cover}
+h1{color:#00ff88}
+a{color:#00ff88;text-decoration:none}
+</style>
+</head>
+<body>
+<h1>🌍 World Trending - ZEENATFLIX GH</h1>
+<a href="index.html">⬅ Back to Netflix</a> | <a href="admin.html">CEO Admin</a>
+<div id="world"></div>
+<script>
+let box=document.getElementById("world");
+let posts=JSON.parse(localStorage.getItem("worldPosts")||"[]");
+if(posts.length==0){box.innerHTML="<p style='margin-top:50px;color:#888'>No World posts yet. CEO will post soon! 🔥</p>"}
+else{
+let html="";
+posts.forEach(p=>{
+html+=`<div class="card"><img src="${p.image}"><h2>${p.title}</h2><p>👁️ ${p.views} Views | ❤️ ${p.likes} Likes | 💬 ${p.comments} Comments</p><p>${p.story}</p><p style="background:#222;padding:10px;border-radius:10px"><b>Subtitles (English/Twi):</b><br>${p.subs}</p><small>${p.date}</small></div>`;
+});
+box.innerHTML=html;
+}
+</script>
+</body>
+</html>
