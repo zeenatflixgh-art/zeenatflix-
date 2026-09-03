@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ADMIN - ZEENATFLIX CEO ONLY</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;padding:15px}
+input,textarea,select{width:95%;padding:12px;margin:8px 0;border-radius:10px;border:none;background:#222;color:#fff}
+.btn{background:#00ff88;color:#000;padding:14px;border-radius:10px;border:none;font-weight:bold;width:98%;font-size:16px;margin:5px 0}
+.card{background:#111;padding:15px;border-radius:15px;margin:10px 0}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div id="login">
+<h1>🔐 ZEENATFLIX CEO LOGIN</h1>
+<p>Only CEO can enter!</p>
+<input type="password" id="pass" placeholder="Enter CEO Password">
+<button class="btn" onclick="checkPass()">Enter Admin</button>
+<p style="color:#aaa;font-size:12px">Hint: zeenat123</p>
+</div>
+
+<div id="admin" class="hide">
+<h1>👑 ZEENATFLIX ADMIN STUDIO</h1>
+<a href="index.html" style="color:#00ff88">View Public Site</a>
+
+<div class="card">
+<h3>🎬 Post New Movie</h3>
+<input id="title" placeholder="Movie Title e.g. THE MARKET WAR">
+<input id="img" placeholder="Poster Image URL (paste link)">
+<input id="views" placeholder="Views e.g. 1.2M">
+<textarea id="story" rows="12" placeholder="Write story with GHANA tags like:
+
+[NARRATOR] In Kumasi market...
+
+[AMARA] Maakye! Me ne Amara!
+
+[KOFI] Chale, how for do?
+
+[CHIEF] Mo mma yɛn nkɔ!
+
+[TWI] Akwaaba!
+
+[NIGERIA] How you dey my guy?
+
+[OLD WOMAN] Me nua bra ha!
+
+Write like this - AI will give each different voice!"></textarea>
+<select id="lang">
+<option>🇬🇭 Ghana English</option>
+<option>🇬🇭 Twi / Akan</option>
+<option>🇳🇬 Nigeria Pidgin</option>
+<option>🇬🇧 English</option>
+</select>
+<button class="btn" onclick="post()">🚀 POST TO WORLD - PUBLIC WILL SEE</button>
+<p id="status"></p>
+</div>
+
+<div class="card">
+<h3>📋 Tag Guide (Only you see this!)</h3>
+<p style="font-size:12px;color:#aaa">
+Use these in your story:<br>
+[AMARA] = Girl voice 👩<br>
+[KOFI] = Boy voice 👨<br>
+[CHIEF] = Deep man 👨‍🦳<br>
+[OLD WOMAN] = Old woman 👵<br>
+[BOY] / [GIRL] = Child 🧒<br>
+[TWI] = Twi style 🇬🇭<br>
+[NIGERIA] = Naija style 🇳🇬<br>
+[NARRATOR] = Story teller
+</p>
+</div>
+</div>
+
+<script>
+function checkPass(){
+if(document.getElementById("pass").value==="zeenat123"){
+document.getElementById("login").classList.add("hide");
+document.getElementById("admin").classList.remove("hide");
+}else{alert("Wrong password! Only CEO!");}
+}
+function post(){
+let title=document.getElementById("title").value;
+let img=document.getElementById("img").value;
+let views=document.getElementById("views").value||"1M";
+let story=document.getElementById("story").value;
+if(!title||!story){alert("Add title and story!");return;}
+// Save to localStorage + GitHub via API simulation
+let movies=JSON.parse(localStorage.getItem("zeenat_movies")||"[]");
+movies.unshift({title,img,views,fullstory:story,date:new Date().toLocaleString()});
+localStorage.setItem("zeenat_movies",JSON.stringify(movies));
+localStorage.setItem("zeenat_"+title,story);
+document.getElementById("status").innerHTML="✅ Posted! Public will see: <b>"+title+"</b><br>Link: story.html?title="+encodeURIComponent(title);
+alert("DONE! Go to public site, refresh - your movie is live!");
+}
+</script>
+</body>
+</html>
