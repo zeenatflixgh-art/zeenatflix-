@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🌍 World People - ZEENATFLIX</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;margin:0;padding:10px}
+.header{background:linear-gradient(90deg,#ff8800,#ff00aa);padding:15px;border-radius:12px;text-align:center;position:sticky;top:0;z-index:10}
+.card{background:#111;border-radius:12px;overflow:hidden;border:1px solid #222;margin:12px 0}
+.card img{width:100%;height:300px;object-fit:cover;display:block}
+.info{padding:12px}
+.btn{padding:10px 16px;border-radius:25px;border:none;margin:5px;font-weight:bold}
+.btnG{background:#00ff88;color:#000}.btnB{background:#0088ff;color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+a{color:#fff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+<h1 style="margin:5px">🌍 WORLD PEOPLE</h1>
+<p style="margin:0;font-size:12px">Global Stories from ZEENATFLIX CEO</p>
+<a href="index.html" style="color:#fff;font-size:12px">⬅ Back to Home</a> | <a href="admin.html" style="color:#00ff88;font-size:12px">👑 CEO Admin</a>
+</div>
+
+<div id="customWorld"></div>
+<h3 style="color:#ff8800;margin-top:20px">🔥 ZEENATFLIX Originals - For The World</h3>
+<div id="movies" class="grid"></div>
+
+<script>
+let base="https://zeenatflixgh-art.github.io/zeenatflix-/";
+let posters=[
+["AMARA","AMARA.jpg","A girl sold for rituals but fights back - Ghana power!"],
+["DEATH OF NO RETURN","DEATH-OF-NO-RETURN.jpg","He returned from death to warn his family!"],
+["FOREST OF NO RETURN","FOREST-OF-NO-RETURN.jpg","The forest that swallows men - will he escape?"],
+["FORGOTTEN PROMISE","FORGOTTEN-PROMISE.jpg","She waited 10 years for his promise!"],
+["MISSING BUT FOUND","MISSING-BUT-FOUND.jpg","Lost in Accra market, found with a secret!"],
+["MY STEPMOTHER'S DAUGHTER","MY-STEPMOTHER'S-DAUGHTER.jpg","My stepmother's daughter tried to steal my destiny!"],
+["SECRETS OF THE LETTER","SECRETS-OF-THE-LETTER.jpg","A letter opened after 20 years changed everything!"],
+["SHATTERED VOWS","SHATTERED-VOWS.jpg","He broke his vow on wedding night!"],
+["THE ABANDONED HUTS","THE-ABANDONED-HUTS.jpg","The huts no one enters - she entered!"],
+["THE FOOD SELLER","THE-FOOD-SELLER.jpg","The food seller who feeds spirits at night!"],
+["THE GENEROUS HUNTER","THE-GENEROUS-HUNTER.jpg","He gave everything but lost his soul!"],
+["THE HEADMASTER SECRET","THE-HEADMASTER-SECRET.jpg","Headmaster's office locked for 30 years - why?"],
+["THE LIBRARY SECRET","THE-LIBRARY-SECRET.jpg","A library book that writes your future!"],
+["THE MARKET GIRL","THE-MARKET-GIRL.jpg","Market girl becomes millionaire overnight!"],
+["THE RIVER BRIDE","THE-RIVER-BRIDE.jpg","Married to the river god!"],
+["THE SLAVE TRADE","THE-SLAVE-TRADE.jpg","Slave trade secret revealed in 2024!"],
+["THE STOLEN BABY","THE-STOLEN-BABY.jpg","Baby stolen for money rituals!"],
+["THE TWINS","THE-TWINS.jpg","Twins separated, one rich one poor - fate!"],
+["THE WHITE MAN","THE-WHITE-MAN.jpg","White man came to village with a box!"]
+];
+
+let container=document.getElementById("movies");
+posters.forEach(p=>{
+let img=base+encodeURIComponent(p[1]);
+let link=`story.html?title=${encodeURIComponent(p[0])}&img=${encodeURIComponent(img)}&fullstory=${encodeURIComponent(p[2])}`;
+container.innerHTML+=`<a href="${link}" class="card"><img src="${img}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x600/111/ff8800?text='+encodeURIComponent(p[0])"><div class="info"><b style="font-size:13px">${p[0]}</b><br><span style="color:#aaa;font-size:11px">${p[2].substring(0,60)}...</span><br><span style="color:#666;font-size:10px">👁️ ${(Math.random()*5+1).toFixed(1)}M • 🌍 World Exclusive</span></div></a>`;
+});
+
+// Show CEO custom World posts from admin
+let custom=JSON.parse(localStorage.getItem("worldMovies")||"[]");
+let cDiv=document.getElementById("customWorld");
+if(custom.length){
+cDiv.innerHTML="<h3 style=color:#00ff88>⭐ CEO Latest World Posts</h3>";
+custom.forEach(m=>{
+let link=`story.html?title=${encodeURIComponent(m.title)}&img=${encodeURIComponent(m.img)}&fullstory=${encodeURIComponent(m.fullstory)}`;
+cDiv.innerHTML+=`<a href="${link}" class="card"><img src="${m.img}" onerror="this.style.background='#222'"><div class="info"><b>${m.title}</b><br><small style=color:#aaa>${m.subtitle||""}</small><br><small style=color:#00ff88>🌍 ${m.lang||"en"} • Posted by CEO</small></div></a>`;
+});
+}
+</script>
+</body>
+</html>
