@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZEENATFLIX GH</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;text-align:center;margin:0}
+h1{color:#ff0055;margin:20px}
+.search{width:90%;padding:12px;border-radius:25px;border:none;margin:10px}
+.card{background:#111;margin:10px;border-radius:15px;padding:10px;display:inline-block;width:160px;vertical-align:top}
+.card img{width:100%;height:220px;border-radius:10px;object-fit:cover}
+.views{color:#0f0;font-size:12px}
+.world-btn{background:#00ff88;color:#000;padding:15px 30px;border-radius:25px;text-decoration:none;display:inline-block;margin:20px;font-weight:bold}
+</style>
+</head>
+<body>
+<h1>ZEENATFLIX GH 🌍</h1>
+<input class="search" placeholder="Search movie..." id="s" onkeyup="filter()">
+<a href="world.html" class="world-btn">🌍 World Post - Trending Ghana Stories - 1M+ Views!</a>
+<div id="movies"></div>
+<script>
+let films=[
+"AMARA.jpg","DEATH-OF-NO-RETURN.jpg","FOREST-OF-NO-RETURN.jpg","FORGOTTEN-PROMISE.jpg","MISSING-BUT-FOUND.jpg","MY-STEPMOTHERS-DAUGHTER.jpg","SECRETS-OF-THE-LETTER.jpg","SHATTERED-VOWS.jpg","THE-ABANDONED-HUTS.jpg","THE-FOOD-SELLER.jpg","THE-WHITE-MAN.jpg"
+];
+let box=document.getElementById("movies");
+function show(list){
+box.innerHTML="";
+list.forEach(f=>{
+let title=f.replace(".jpg","").replace(/-/g," ");
+box.innerHTML+=`<div class="card"><a href="story.html?title=${title}&img=${f}" style="text-decoration:none;color:#fff"><img src="${f}"><h4>${title}</h4><div class="views">👁️ 1.2M Views</div></a></div>`;
+});
+}
+show(films);
+function filter(){
+let q=document.getElementById("s").value.toLowerCase();
+show(films.filter(f=>f.toLowerCase().includes(q)));
+}
+</script>
+</body>
+</html>
