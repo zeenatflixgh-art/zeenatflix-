@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story - ZEENATFLIX</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;margin:0;padding:15px}
+.poster{width:100%;max-width:400px;border-radius:15px}
+.card{background:#111;border-radius:15px;padding:15px;margin:15px 0}
+.video{width:100%;height:220px;background:#222;border-radius:15px;display:flex;align-items:center;justify-content:center;color:#888}
+.btn{background:#ff0055;color:#fff;padding:10px 20px;border-radius:25px;border:none;margin:5px;font-weight:bold}
+.btnM{background:#0088ff;color:#fff;padding:10px 20px;border-radius:25px;border:none;margin:5px;font-weight:bold}
+.btnF{background:#ff00aa;color:#fff;padding:10px 20px;border-radius:25px;border:none;margin:5px;font-weight:bold}
+.btnG{background:#00ff88;color:#000;padding:10px 20px;border-radius:25px;border:none;margin:5px;font-weight:bold}
+.back{color:#00ff88;text-decoration:none}
+.stats{color:#0f0}
+select{padding:10px;border-radius:10px;width:95%}
+</style>
+</head>
+<body>
+<a href="index.html" class="back">⬅ Back to ZEENATFLIX</a>
+<h1 id="title"></h1>
+<img id="img" class="poster">
+<div class="card"><h3>🎬 Video Player</h3><div class="video">▶️ Video Coming Soon</div></div>
+<div class="card"><h3>📖 Full Story</h3><p id="story">Full Ghana movie story will be here... Trending #1!</p>
+<br>
+<label>Choose Voice:</label><br>
+<select id="voiceSelect"></select><br><br>
+<button class="btnF" onclick="speakFemale()">👩 Female Voice</button>
+<button class="btnM" onclick="speakMale()">👨 Male Voice</button><br>
+<button class="btnG" onclick="speakBoth()">🎭 Auto Drama (Male+Female)</button>
+<button class="btn" onclick="stop()">⏹️ Stop</button>
+<p style="font-size:11px;color:#aaa;margin-top:10px">Tip: Write like this in Admin: [FEMALE] Amara was crying... [MALE] The hunter said... Then tap Auto Drama!</p>
+</div>
+<div class="card"><p class="stats">👁️ <span id="v"></span> | ❤️ <span id="l"></span> | 💬 <span id="c"></span></p></div>
+<div style="text-align:center"><button class="btn" onclick="share()">📤 Share</button></div>
+<script>
+let p=new URLSearchParams(location.search);
+document.getElementById("title").innerText=p.get("title")||"Movie";
+document.getElementById("img").src=p.get("img")||"";
+document.getElementById("v").innerText=p.get("views")||"1.5M";
+document.getElementById("l").innerText=p.get("likes")||"125K";
+document.getElementById("c").innerText=p.get("comments")||"35K";
+let storyEl=document.getElementById("story");
+let sel=document.getElementById("voiceSelect");
+let voices=[];
+function loadVoices(){
+voices=speechSynthesis.getVoices();
+sel.innerHTML="";
+voices.forEach((v,i)=>{
+let opt=document.createElement("option");
+opt.value=i;opt.textContent=v.name+" ("+v.lang+")";
+if(v.name.toLowerCase().includes("female")||v.name.toLowerCase().includes("zira")||v.name.toLowerCase().includes("samantha")){opt.textContent="👩 "+opt.textContent}
+if(v.name.toLowerCase().includes("male")||v.name.toLowerCase().includes("david")||v.name.toLowerCase().includes("mark")){opt.textContent="👨 "+opt.textContent}
+sel.appendChild(opt);
+});
+}
+speechSynthesis.onvoiceschanged=loadVoices;
+setTimeout(loadVoices,500);
+function speakText(t,voiceIdx){
+speechSynthesis.cancel();
+let u=new SpeechSynthesisUtterance(t);
+if(voices[voiceIdx]){u.voice=voices[voiceIdx]}
+u.rate=0.9;speechSynthesis.speak(u);
+}
+function speakFemale(){
+let idx=[...sel.options].findIndex(o=>o.text.toLowerCase().includes("female")||o.text.toLowerCase().includes("zira")||o.text.toLowerCase().includes("samantha")||o.text.toLowerCase().includes("eva"));
+if(idx<0)idx=sel.selectedIndex;
+speakText(storyEl.innerText,idx>=0?idx:0);
+}
+function speakMale(){
+let idx=[...sel.options].findIndex(o=>o.text.toLowerCase().includes("male")||o.text.toLowerCase().includes("david")||o.text.toLowerCase().includes("mark")||o.text.toLowerCase().includes("alex"));
+if(idx<0)idx=sel.selectedIndex;
+speakText(storyEl.innerText,idx>=0?idx:0);
+}
+function speakBoth(){
+let text=storyEl.innerText;
+let parts=text.split(/\[MALE\]|\[FEMALE\]|\[MAN\]|\[WOMAN\]/i);
+let tags=[...text.matchAll(/\[(MALE|FEMALE|MAN|WOMAN)\]/gi)].map(m=>m[1].toUpperCase());
+speechSynthesis.cancel();
+let i=0;
+function next(){
+if(i>=parts.length)return;
+let t=parts[i].trim();
+if(t){
+let isMale=tags[i-1]==="MALE"||tags[i-1]==="MAN";
+let vIdx=isMale?
+[...sel.options].findIndex(o=>o.text.toLowerCase().includes("male")||o.text.toLowerCase().includes("david")):
+[...sel.options].findIndex(o=>o.text.toLowerCase().includes("female")||o.text.toLowerCase().includes("zira"));
+let u=new SpeechSynthesisUtterance(t);
+if(voices[vIdx>=0?vIdx:sel.selectedIndex])u.voice=voices[vIdx>=0?vIdx:sel.selectedIndex];
+u.rate=0.9;
+u.onend=()=>{i++;next();}
+speechSynthesis.speak(u);
+}else{i++;next();}
+}
+next();
+}
+function stop(){speechSynthesis.cancel()}
+function share(){if(navigator.share){navigator.share({title:p.get("title"),url:location.href})}else{prompt("Copy link:",location.href)}}
+</script>
+</body>
+</html>
