@@ -1,0 +1,22 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CEO Panel - Zeenatflix</title>
+<style>body{background:#111;color:#fff;font-family:Arial;padding:15px;max-width:700px;margin:auto}input,textarea,select{width:100%;padding:10px;margin:6px 0;border-radius:6px;border:1px solid #444;background:#222;color:#fff}button{background:#e50914;color:#fff;padding:12px;border:none;border-radius:6px;width:100%;margin:6px 0;cursor:pointer;font-weight:bold}.card{background:#222;padding:12px;border-radius:8px;margin:8px 0}</style></head><body>
+<h2>👑 ZEENATFLIX CEO PANEL</h2><a href="index.html" style="color:#e50914">← Home</a>
+<div class="card"><h3>Add / Edit Story</h3>
+<input id="t" placeholder="Title (e.g AMARA)">
+<input id="tag" placeholder="Tagline">
+<input id="img" placeholder="Image URL">
+<input id="video" placeholder="Video URL (mp4 link)">
+<input id="audio" placeholder="Audio URL (mp3 link)">
+<textarea id="story" placeholder="Full story text..."></textarea>
+<button onclick="add()">💾 SAVE TO PHONE (Local)</button>
+<button onclick="clearAll()" style="background:#555">🗑️ Clear</button>
+</div>
+<div id="list"></div>
+<script>
+let stories=JSON.parse(localStorage.getItem('zeenat_stories')||'[]');
+function render(){let h='';stories.forEach((s,i)=>{h+=`<div class=card><b>${s.title}</b><br>${s.tag}<br><button onclick="del(${i})" style="background:#444;width:auto;padding:6px 10px">Delete</button></div>`});document.getElementById('list').innerHTML=h;}
+function add(){let s={id:Date.now(),title:t.value,tag:tag.value,img:img.value,video:video.value,audio:audio.value,story:story.value};stories.unshift(s);localStorage.setItem('zeenat_stories',JSON.stringify(stories));alert('Saved! Now copy to GitHub later');render();}
+function del(i){stories.splice(i,1);localStorage.setItem('zeenat_stories',JSON.stringify(stories));render();}
+function clearAll(){if(confirm('Clear all?')){localStorage.removeItem('zeenat_stories');stories=[];render();}}
+render();
+</script></body></html>
