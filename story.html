@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Story - ZeenatFlix</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;padding:15px;text-align:center}
+img{max-width:300px;width:90%;border-radius:15px;margin:20px auto;display:block}
+.box{background:#111;padding:15px;border-radius:10px;margin:15px 0;text-align:left}
+.btn{background:#ff004f;color:#fff;padding:12px 25px;border-radius:25px;display:inline-block;margin:5px;text-decoration:none;border:none}
+a{color:#ff004f;text-decoration:none}
+video{width:100%;border-radius:10px;margin-top:10px}
+</style>
+</head>
+<body>
+<a href="index.html">← Back to Home</a>
+<h1 id="title"></h1>
+<img id="poster">
+<div class="box">
+<h3>🎥 Video Player + Subtitles (English / Twi)</h3>
+<video controls poster="" id="video"><source src="" type="video/mp4">
+<track label="English" kind="subtitles" srclang="en" src="subtitles.vtt" default>
+</video>
+<p>Subtitles ON</p>
+</div>
+<div class="box">
+<h3>📖 Full Story Post</h3>
+<p id="fullstory">Full Ghana movie story will be here... This movie has 1.5M views, 125K likes, 35K comments! Trending #1 in Ghana! ZeenatFlix original!</p>
+</div>
+<div class="box">
+<p>👁️ 1.5M Views | ❤️ 125K Likes | 💬 35K Comments | 🌍 World Trending</p>
+</div>
+<button class="btn" onclick="location.href='world.html'">🌎 Post to World</button>
+<button class="btn" onclick="share()">Share Movie</button>
+<script>
+const params=new URLSearchParams(location.search);
+const movie=params.get('movie')||'AMARA.jpg';
+document.getElementById('poster').src=movie;
+document.getElementById('title').innerText=movie.replace('.jpg','').replace(/-/g,' ');
+function share(){ alert("Shared! Boosting to 2M views for Google SEO!"); }
+</script>
+</body>
+</html>
