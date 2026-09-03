@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZEENATFLIX - Ghana Movies</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;margin:0;padding:10px}
+.header{background:linear-gradient(90deg,#ff00aa,#ff8800);padding:15px;border-radius:12px;text-align:center;position:sticky;top:0;z-index:10}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.card{background:#111;border-radius:12px;overflow:hidden;border:1px solid #222}
+.card img{width:100%;height:250px;object-fit:cover;display:block;background:#111}
+.card div{padding:8px}
+.views{color:#aaa;font-size:11px}
+a{color:#fff;text-decoration:none}
+.ceo{position:fixed;bottom:20px;right:20px;background:#00ff88;color:#000;padding:12px 18px;border-radius:50px;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="header">
+<h1 style="margin:5px">🎬 ZEENATFLIX</h1>
+<p style="margin:0;font-size:13px">19 Ghana Movies - Tap to Listen!</p>
+</div>
+<div class="grid" id="movies"></div>
+<a href="admin.html" class="ceo">👑 CEO</a>
+<script>
+let base="https://zeenatflixgh-art.github.io/zeenatflix-/";
+let list=[
+["AMARA","AMARA.jpg","3.2M"],
+["THE LIBRARY SECRET","THE-LIBRARY-SECRET.jpg","2.8M"],
+["THE RIVER BRIDE","THE-RIVER-BRIDE.jpg","4.1M"],
+["THE STOLEN BABY","THE-STOLEN-BABY.jpg","5.5M"],
+["THE WHITE MAN","THE-WHITE-MAN.jpg","2.2M"],
+["THE ABANDONED HUTS","THE-ABANDONED-HUTS.jpg","1.9M"],
+["THE TWINS","THE-TWINS.jpg","3.7M"],
+["MISSING BUT FOUND","MISSING-BUT-FOUND.jpg","4.4M"],
+["SECRETS OF THE LETTER","SECRETS-OF-THE-LETTER.jpg","2.5M"],
+["THE GENEROUS HUNTER","THE-GENEROUS-HUNTER.jpg","1.8M"],
+["THE FOOD SELLER","THE-FOOD-SELLER.jpg","3.9M"],
+["THE SLAVE TRADE","THE-SLAVE-TRADE.jpg","6.1M"],
+["THE HEADMASTER SECRET","THE-HEADMASTER-SECRET.jpg","2.3M"],
+["FORGOTTEN PROMISE","FORGOTTEN-PROMISE.jpg","3.0M"],
+["THE MARKET GIRL","THE-MARKET-GIRL.jpg","4.8M"],
+["MY STEPMOTHER'S DAUGHTER","MY-STEPMOTHER'S-DAUGHTER.jpg","5.2M"],
+["FOREST OF NO RETURN","FOREST-OF-NO-RETURN.jpg","2.9M"],
+["SHATTERED VOWS","SHATTERED-VOWS.jpg","3.4M"],
+["DEATH OF NO RETURN","DEATH-OF-NO-RETURN.jpg","4.0M"]
+];
+let movies=list.map(x=>({title:x[0],file:x[1],views:x[2],fullstory:`[NARRATOR] ${x[0]} - A powerful Ghanaian story from Tales By Zeenat. [AMARA] Maakye! Welcome! [KOFI] Chale, this go touch your heart!`}));
+let container=document.getElementById("movies");
+movies.forEach(m=>{
+let img=base+encodeURIComponent(m.file);
+let link=`story.html?title=${encodeURIComponent(m.title)}&img=${encodeURIComponent(img)}&fullstory=${encodeURIComponent(m.fullstory)}`;
+container.innerHTML+=`<a href="${link}" class="card"><img src="${img}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x600/111/ff00aa?text='+encodeURIComponent(m.title)"><div><b style="font-size:12px">${m.title}</b><br><span class="views">👁️ ${m.views} • ❤️ ${(Math.random()*800+200).toFixed(0)}k • Ghana</span></div></a>`;
+});
+</script>
+</body>
+</html>
