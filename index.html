@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEENATFLIX GH</title>
+<style>
+body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial,sans-serif}
+.header{background:linear-gradient(90deg,#ff0080,#ff6b35);padding:15px;text-align:center;position:sticky;top:0;z-index:100}
+.header h1{margin:0;font-size:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;padding:15px}
+.card{background:#1a1a1a;border-radius:12px;overflow:hidden;cursor:pointer;transition:.2s}
+.card:hover{transform:scale(1.03)}
+.card img{width:100%;height:220px;object-fit:cover;background:#222}
+.card .info{padding:10px}
+.card .info h3{font-size:13px;margin:0;color:#ff6b35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav{display:flex;justify-content:center;gap:15px;padding:10px;background:#111}
+.nav a{color:#fff;text-decoration:none;padding:6px 14px;border-radius:20px;background:#222}
+.nav a.active{background:#ff0080}
+</style>
+</head>
+<body>
+<div class="header"><h1>👑 ZEENATFLIX GH</h1><p style="margin:5px 0 0;font-size:13px">Ghana's Best Audio Stories</p></div>
+<div class="nav"><a href="index.html" class="active">🏠 Home</a><a href="world.html">🌍 World</a><a href="admin.html">👑 CEO</a></div>
+<div class="grid" id="movieGrid"></div>
+
+<script>
+// FIXED - NO APOSTROPHE - Your correct files CEO!
+const posters = [
+"AMARA.jpg",
+"DEATH-OF-NO-RETURN.jpg",
+"FOREST-OF-NO-RETURN.jpg",
+"FORGOTTEN-PROMISE.jpg",
+"MISSING-BUT-FOUND.jpg",
+"MY-STEPMOTHERS-DAUGHTER.jpg",
+"SECRETS-OF-THE-LETTER.jpg",
+"SHATTERED-VOWS.jpg",
+"THE-ABANDONED-HUTS.jpg",
+"THE-FOOD-SELLER.jpg",
+"THE-GENEROUS-HUNTER.jpg",
+"THE-HEADMASTER-SECRET.jpg",
+"THE-LIBRARY-SECRET.jpg",
+"THE-MARKET-GIRL.jpg",
+"THE-RIVER-BRIDE.jpg",
+"THE-SLAVE-TRADE.jpg"
+];
+
+function loadMovies(){
+ const grid=document.getElementById('movieGrid');
+ let custom=JSON.parse(localStorage.getItem('customMovies')||'[]');
+ let html='';
+ custom.forEach(m=>{
+   html+=`<div class="card"><img src="${m.image}"><div class="info"><h3>${m.title}</h3></div></div>`;
+ });
+ posters.forEach(p=>{
+   let title=p.replace('.jpg','').replace(/-/g,' ');
+   let safePath=encodeURI('./posters/'+p);
+   html+=`<div class="card"><img src="${safePath}" loading="lazy"><div class="info"><h3>${title}</h3></div></div>`;
+ });
+ grid.innerHTML=html;
+}
+loadMovies();
+</script>
+</body>
+</html>
