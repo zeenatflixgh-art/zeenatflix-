@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WORLD PEOPLE - ZEENATFLIX</title>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:Arial;margin:0;padding:10px}
+.header{background:linear-gradient(90deg,orange,#ff1493);padding:15px;border-radius:15px;text-align:center;position:sticky;top:0;z-index:10}
+.header a{color:#fff;text-decoration:none;font-weight:bold;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:20px;margin:2px;display:inline-block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.card{background:#1e1e1e;border-radius:12px;overflow:hidden;cursor:pointer}
+.card img{width:100%;height:250px;object-fit:cover;background:#222;display:block}
+.info{padding:10px}
+.info h3{margin:5px 0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info p{margin:0;font-size:11px;color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{position:absolute;top:8px;left:8px;background:#00ff9d;color:#000;font-size:9px;padding:3px 7px;border-radius:10px;font-weight:bold}
+.wrap{position:relative}
+</style>
+</head>
+<body>
+<div class="header">
+<h2 style="margin:0">🌍 WORLD PEOPLE</h2>
+<p style="margin:5px 0;font-size:12px">Global Stories from ZEENATFLIX CEO</p>
+<a href="index.html">🏠 Home</a> <a href="admin.html">👑 Admin</a> <a href="#" onclick="location.reload()">🔄 Refresh</a>
+<div id="count" style="margin-top:8px;font-size:12px"></div>
+</div>
+<div class="grid" id="grid"></div>
+<script>
+const allPosters=[
+{t:"MISSING BUT FOUND",img:"MISSING-BUT-FOUND.jpg",d:"Lost in Accra market",v:"5.6M"},
+{t:"MY STEPMOTHER'S DAUGHTER",img:"STEPMOTHER.jpg",d:"Tried to steal my destiny",v:"2.2M"},
+{t:"SECRETS OF THE LETTER",img:"SECRETS-OF-THE-LETTER.jpg",d:"Letter opened after 20 years",v:"4.2M"},
+{t:"SHATTERED VOWS",img:"SHATTERED-VOWS.jpg",d:"Broke his vow on wedding night",v:"1.1M"},
+{t:"THE ABANDONED HUTS",img:"THE-ABANDONED-HUTS.jpg",d:"Vanishing of Maame Serwaa",v:"3.3M"},
+{t:"THE FOOD SELLER",img:"THE-FOOD-SELLER.jpg",d:"Monica's Secret",v:"2.8M"},
+{t:"THE STOLEN BABY",img:"THE-STOLEN-BABY.jpg",d:"She Sold Her Baby For Money",v:"6.1M"},
+{t:"AMARA",img:"AMARA.jpg",d:"Village girl who became queen",v:"3.0M"},
+{t:"THE MARKET GIRL",img:"THE-MARKET-GIRL.jpg",d:"Market girl story",v:"1.9M"},
+{t:"THE RIVER BRIDE",img:"THE-RIVER-BRIDE.jpg",d:"River bride mystery",v:"2.5M"},
+{t:"THE SLAVE TRADE",img:"THE-SLAVE-TRADE.jpg",d:"Slave trade history",v:"4.0M"},
+{t:"THE TWINS",img:"THE-TWINS.jpg",d:"The twins secret",v:"3.1M"},
+{t:"THE WHITE MAN",img:"THE-WHITE-MAN.jpg",d:"The white man story",v:"2.7M"},
+{t:"THE LIBRARY SECRET",img:"THE-LIBRARY-SECRET.jpg",d:"Library secret",v:"1.8M"},
+{t:"FORGOTTEN PROMISE",img:"FORGOTTEN-PROMISE.jpg",d:"Forgotten promise",v:"2.0M"},
+{t:"DEATH OF NO RETURN",img:"DEATH-OF-NO-RETURN.jpg",d:"Death of no return",v:"3.5M"},
+{t:"FOREST OF NO RETURN",img:"FOREST-OF-NO-RETURN.jpg",d:"Forest of no return",v:"2.9M"},
+{t:"THE GENEROUS HUNTER",img:"THE-GENEROUS-HUNTER.jpg",d:"Generous hunter tale",v:"2.3M"},
+{t:"THE HEADMASTER SECRET",img:"THE-HEADMASTER-SECRET.jpg",d:"Headmaster secret",v:"2.1M"}
+];
+function render(){
+ let grid=document.getElementById('grid');grid.innerHTML="";
+ let posted=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");
+ let posterStories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");
+ document.getElementById('count').innerText=posted.length+" Your Stories + "+allPosters.length+" World Classics = "+(posted.length+allPosters.length)+" Total";
+ posted.forEach(m=>{
+  let d=document.createElement('div');d.className='card';
+  d.innerHTML=`<div class="wrap"><div class="badge">YOUR POST 🌟</div><img src="${m.image}"></div><div class="info"><h3>${m.title}</h3><p>${m.subtitle||''}</p><p>NEW • Your Story</p></div>`;
+  d.onclick=()=>location.href='story.html?id='+m.id;
+  grid.appendChild(d);
+ });
+ allPosters.forEach((p,i)=>{
+  let hasStory=posterStories['static_'+i]?"✅ ":"";
+  let d=document.createElement('div');d.className='card';
+  d.innerHTML=`<div class="wrap"><div class="badge" style="background:#ff1493;color:#fff">${hasStory}WORLD 🌍</div><img src="${p.img}?v=99"></div><div class="info"><h3>${p.t}</h3><p>${p.d}</p><p>👁️ ${p.v} • World Exclusive</p></div>`;
+  d.onclick=()=>{
+    if(posterStories['static_'+i]){location.href='story.html?id=static_'+i;}
+    else{alert(p.t+' - No story yet! Go to Admin > Select '+p.t+' > Write story > Save!');}
+  };
+  grid.appendChild(d);
+ });
+}
+render();
+</script>
+</body>
+</html>
