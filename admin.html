@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CEO ADMIN - ZEENATFLIX</title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;margin:0;padding:15px}
+input,select,textarea{width:100%;padding:14px;margin:8px 0;border-radius:10px;border:none;background:#222;color:#fff;font-size:14px;box-sizing:border-box}
+textarea{min-height:120px}
+.bigbox{min-height:280px!important;background:#111!important;border:1px solid #333!important;font-size:15px!important;line-height:1.5}
+.btn{padding:14px;border-radius:10px;border:none;font-weight:bold;width:100%;margin:8px 0;font-size:15px}
+.btnGreen{background:#00ff88;color:#000}
+.btnOrange{background:#ff8800;color:#fff}
+.card{background:#151515;border-radius:15px;padding:15px;margin:15px 0;border:1px solid #222}
+.login{max-width:400px;margin:80px auto;text-align:center}
+.hide{display:none}
+.gallery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;max-height:300px;overflow-y:auto}
+.gallery img{width:100%;height:80px;object-fit:cover;border-radius:8px;border:2px solid transparent}
+.gallery img.selected{border-color:#00ff88;box-shadow:0 0 10px #00ff88}
+label{color:#00ff88;font-size:12px;font-weight:bold;margin-top:12px;display:block}
+</style>
+</head>
+<body>
+<div id="loginBox" class="login">
+<h1>🔐 CEO LOGIN</h1>
+<input type="password" id="pass" placeholder="Enter CEO Password">
+<button class="btn btnGreen" onclick="login()">Enter</button>
+<p style="color:#666;font-size:11px;margin-top:15px">ZEENATFLIX Protected - Papaja69$$</p>
+</div>
+
+<div id="adminBox" class="hide">
+<a href="index.html" style="color:#00ff88">⬅ Home</a> | <a href="world.html" style="color:#ff8800">🌍 World</a> | <a href="#" onclick="logout()" style="color:#ff4444">Logout</a>
+<h2>👑 ZEENATFLIX CEO PANEL</h2>
+
+<div class="card">
+<h3>📤 Post Movie</h3>
+<label>Movie Title *</label>
+<input id="title" placeholder="e.g. THE STOLEN BABY">
+<label>Subtitle / Tagline</label>
+<input id="subtitle" placeholder="e.g. She Sold Her Baby For Money">
+<label>Language / Voice Accent *</label>
+<select id="lang">
+<option value="en-US">🇺🇸 English - US (American)</option>
+<option value="en-GB">🇬🇧 English - British (UK)</option>
+<option value="en-NG">🇳🇬 English - Nigeria (Lagos)</option>
+<option value="en-GH">🇬🇭 English - Ghana</option>
+<option value="pcm">🇳🇬 Pidgin - Naija Pidgin</option>
+<option value="tw">🇬🇭 Twi - Akan</option>
+<option value="ga">🇬🇭 Ga</option>
+<option value="ee">🇬🇭 Ewe</option>
+<option value="ha">🇬🇭 Hausa</option>
+<option value="yo">🇳🇬 Yoruba</option>
+<option value="ig">🇳🇬 Igbo - Ibo</option>
+<option value="fr">🇫🇷 French</option>
+</select>
+
+<label>Choose Image from Your 19 Posters</label>
+<div class="gallery" id="gallery"></div>
+<label>Or Image URL</label>
+<input id="imgUrl" placeholder="https://... or leave blank">
+<label>Or Choose from Phone Gallery</label>
+<input type="file" id="fileInput" accept="image/*" onchange="previewFile()">
+<img id="preview" style="width:100%;max-width:300px;border-radius:12px;margin:10px 0;display:none">
+
+<label>Full Story - BIG BOX with voice tags *</label>
+<textarea id="fullstory" class="bigbox" placeholder="[NARRATOR] It was early morning in Kumasi...
+[AMARA] Maakye! How are you?
+[KOFI] Chale, I am fine o!
+[BABA] Mo ki yin o! Bawo ni? (Yoruba)
+[MAMA IGBO] Kedu ka i di? (Igbo)
+[CHIEF] Listen my children!
+
+Tip: The voice will automatically change for each tag! For Yoruba/Igbo old people, write their lines and choose Yoruba/Igbo language above!"></textarea>
+
+<button class="btn btnGreen" onclick="postMovie()">🎬 Post Movie to ZEENATFLIX (Home)</button>
+<button class="btn btnOrange" onclick="postToWorld()">🌍 Post to World People Page</button>
+</div>
+
+<div class="card">
+<h3>📋 Your 19 Posters Quick Post - Tap to Fill</h3>
+<div id="quickPost" class="gallery"></div>
+</div>
+</div>
+
+<script>
+let PASSWORD="Papaja69$$";
+let base="https://zeenatflixgh-art.github.io/zeenatflix-/";
+let posters=["AMARA.jpg","DEATH-OF-NO-RETURN.jpg","FOREST-OF-NO-RETURN.jpg","FORGOTTEN-PROMISE.jpg","MISSING-BUT-FOUND.jpg","MY-STEPMOTHER'S-DAUGHTER.jpg","SECRETS-OF-THE-LETTER.jpg","SHATTERED-VOWS.jpg","THE-ABANDONED-HUTS.jpg","THE-FOOD-SELLER.jpg","THE-GENEROUS-HUNTER.jpg","THE-HEADMASTER-SECRET.jpg","THE-LIBRARY-SECRET.jpg","THE-MARKET-GIRL.jpg","THE-RIVER-BRIDE.jpg","THE-SLAVE-TRADE.jpg","THE-STOLEN-BABY.jpg","THE-TWINS.jpg","THE-WHITE-MAN.jpg"];
+let selectedImg="";
+function login(){
+let p=document.getElementById("pass").value;
+if(p===PASSWORD){
+localStorage.setItem("ceo","1");
+showAdmin();
+}else{
+alert("Wrong password! Try again CEO.");
+}
+}
+function logout(){localStorage.removeItem("ceo");location.reload();}
+function showAdmin(){document.getElementById("loginBox").classList.add("hide");document.getElementById("adminBox").classList.remove("hide");buildGallery();}
+if(localStorage.getItem("ceo")){showAdmin();}
+function buildGallery(){
+let g=document.getElementById("gallery");
+let q=document.getElementById("quickPost");
+g.innerHTML=""; q.innerHTML="";
+posters.forEach(p=>{
+let url=base+encodeURIComponent(p);
+let title=p.replace(".jpg","").replace(/-/g," ");
+g.innerHTML+=`<img src="${url}" onclick="selectPoster('${p.replace(/'/g,"\\'")}')" title="${title}">`;
+q.innerHTML+=`<div onclick="quickSelect('${p.replace(/'/g,"\\'")}')"><img src="${url}" style="width:100%;height:90px;object-fit:cover;border-radius:8px"><div style="font-size:10px;text-align:center;margin-top:3px">${title}</div></div>`;
+});
+}
+function selectPoster(name){
+selectedImg=base+encodeURIComponent(name);
+document.querySelectorAll("#gallery img").forEach(i=>i.classList.remove("selected"));
+document.getElementById("imgUrl").value=selectedImg;
+document.getElementById("preview").src=selectedImg;
+document.getElementById("preview").style.display="block";
+// auto highlight
+let all=document.querySelectorAll("#gallery img");
+all.forEach(img=>{if(img.src===selectedImg)img.classList.add("selected");});
+}
+function quickSelect(name){
+document.getElementById("title").value=name.replace(".jpg","").replace(/-/g," ");
+selectPoster(name);
+}
+function previewFile(){
+let file=document.getElementById("fileInput").files[0];
+if(!file)return;
+let reader=new FileReader();
+reader.onload=e=>{
+document.getElementById("preview").src=e.target.result;
+document.getElementById("preview").style.display="block";
+selectedImg=e.target.result;
+document.getElementById("imgUrl").value="FILE_SELECTED";
+};
+reader.readAsDataURL(file);
+}
+function getData(){
+let title=document.getElementById("title").value.trim();
+let subtitle=document.getElementById("subtitle").value.trim();
+let img=document.getElementById("imgUrl").value.trim()||selectedImg;
+let story=document.getElementById("fullstory").value.trim();
+let lang=document.getElementById("lang").value;
+if(!title||!story){alert("CEO! Add Title and Full Story!");return null;}
+if(!img){alert("Choose image!");return null;}
+return{title,subtitle,img,fullstory:story,lang,views:Math.floor(Math.random()*5000)+500+"",likes:Math.floor(Math.random()*800)+100+"",time:Date.now()};
+}
+function postMovie(){let d=getData(); if(!d)return;let list=JSON.parse(localStorage.getItem("customMovies")||"[]");list.unshift(d);localStorage.setItem("customMovies",JSON.stringify(list));alert("✅ Posted to Home! Language: "+d.lang);location.href="index.html";}
+function postToWorld(){let d=getData(); if(!d)return;let list=JSON.parse(localStorage.getItem("worldMovies")||"[]");list.unshift(d);localStorage.setItem("worldMovies",JSON.stringify(list));alert("🌍 Posted to World! Language: "+d.lang);location.href="world.html";}
+</script>
+</body>
+  </html>
