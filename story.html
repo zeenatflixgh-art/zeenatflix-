@@ -1,0 +1,176 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ZEENATFLIX - Story Player</title>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:Arial;margin:0;padding:0}
+.header{background:linear-gradient(90deg,#ff1493,orange);padding:12px;position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center}
+.header a{color:#fff;text-decoration:none;font-weight:bold;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:20px}
+.poster{width:100%;height:380px;object-fit:cover}
+.content{padding:15px}
+.title{font-size:22px;font-weight:bold;margin:10px 0}
+.subtitle{color:#aaa;margin-bottom:15px}
+.story-box{background:#1e1e1e;padding:15px;border-radius:12px;white-space:pre-wrap;line-height:1.8;font-size:15px;max-height:400px;overflow-y:auto}
+.controls{background:#1e1e1e;margin:15px;padding:15px;border-radius:15px;position:sticky;bottom:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+button{padding:10px 14px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;flex:1}
+.play{background:#00ff9d;color:#000}.pause{background:#ffaa00;color:#000}.stop{background:#ff4d6d;color:#fff}.voice-btn{background:#2a2a2a;color:#fff;font-size:11px}
+select{width:100%;padding:10px;border-radius:10px;background:#2a2a2a;color:#fff;border:none;margin-bottom:10px}
+.active{border:2px solid #00ff9d;background:#00ff9d!important;color:#000!important}
+.chip{display:inline-block;background:#2a2a2a;padding:5px 10px;border-radius:20px;font-size:11px;margin:3px}
+</style>
+</head><body>
+<div class="header"><a href="index.html">⬅️ Home</a><span id="views" style="font-size:12px">👁️</span><a href="world.html">🌍 World</a></div>
+<img id="poster" class="poster" src="">
+<div class="content">
+<div id="title" class="title"></div>
+<div id="subtitle" class="subtitle"></div>
+<div style="margin-bottom:10px"><span id="charList"></span></div>
+<div id="story" class="story-box"></div>
+</div>
+<div class="controls">
+<select id="voiceSelect"><option>Loading voices...</option></select>
+<div class="row">
+<button class="play" onclick="playStory()">▶️ PLAY</button>
+<button class="pause" onclick="pauseStory()">⏸️ PAUSE</button>
+<button class="stop" onclick="stopStory()">⏹️ STOP</button>
+</div>
+<div class="row" id="charButtons"></div>
+<div class="row">
+<button class="voice-btn" onclick="setAccent('ghana')">🇬🇭 Ghana Twi</button>
+<button class="voice-btn" onclick="setAccent('pidgin')">🇳🇬 Pidgin</button>
+<button class="voice-btn" onclick="setAccent('yoruba')">Yoruba</button>
+<button class="voice-btn" onclick="setAccent('uk')">🇬🇧 UK</button>
+<button class="voice-btn" onclick="setAccent('us')">🇺🇸 US</button>
+</div>
+<div style="font-size:10px;color:#777;margin-top:8px">💡 Write in admin like: KING: My daughter... QUEEN MOTHER: Listen... PRINCE: I love you! - AI auto-changes voice!</div>
+</div>
+
+<script>
+let movie=null;let utterance=null;let voices=[];let currentAccent='default';
+let charVoices={
+"king":{rate:0.8,pitch:0.6,voiceType:'oldMan',label:'👑 King / Old Man'},
+"old man":{rate:0.8,pitch:0.6,voiceType:'oldMan'},
+"keleshi father":{rate:0.85,pitch:0.65,voiceType:'oldMan'},
+"father":{rate:0.85,pitch:0.7,voiceType:'male'},
+"queen mother":{rate:0.8,pitch:0.9,voiceType:'oldWoman',label:'👵 Queen Mother / Old Woman'},
+"old woman":{rate:0.8,pitch:0.9,voiceType:'oldWoman'},
+"keleshi mother":{rate:0.85,pitch:0.95,voiceType:'oldWoman'},
+"mother":{rate:0.9,pitch:1.0,voiceType:'female'},
+"prince":{rate:0.95,pitch:0.8,voiceType:'youngMale',label:'🤴 Prince / Boyfriend'},
+"boyfriend":{rate:0.95,pitch:0.8,voiceType:'youngMale'},
+"king's son":{rate:0.95,pitch:0.8,voiceType:'youngMale'},
+"guard":{rate:1.0,pitch:0.7,voiceType:'male',label:'💂 Guard'},
+"villager man":{rate:1.0,pitch:0.75,voiceType:'male'},
+"maid":{rate:1.1,pitch:1.2,voiceType:'youngFemale',label:'👩‍🍳 Maid'},
+"villager woman":{rate:1.0,pitch:1.1,voiceType:'female'},
+"keleshi":{rate:1.05,pitch:1.15,voiceType:'youngFemale',label:'👸 Keleshi / Amara / Girl'},
+"amara":{rate:1.05,pitch:1.15,voiceType:'youngFemale'},
+"princess":{rate:1.05,pitch:1.15,voiceType:'youngFemale'},
+"girl":{rate:1.1,pitch:1.25,voiceType:'youngFemale'},
+"boy":{rate:1.15,pitch:1.3,voiceType:'childBoy',label:'👦 Boy / Child Boy'},
+"child boy":{rate:1.2,pitch:1.4,voiceType:'childBoy'},
+"child girl":{rate:1.2,pitch:1.5,voiceType:'childGirl',label:'👧 Child Girl'},
+"little girl":{rate:1.2,pitch:1.5,voiceType:'childGirl'},
+"narrator":{rate:0.95,pitch:1.0,voiceType:'female',label:'🎙️ Narrator'}
+};
+
+function loadStory(){
+ let id=new URLSearchParams(location.search).get('id');
+ let movies=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");
+ let posterStories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");
+ if(posterStories[id]) movie=posterStories[id];
+ else movie=movies.find(m=>m.id==id);
+ if(!movie && id && id.startsWith('static_')){
+   let idx=parseInt(id.replace('static_',''));
+   let allP=["MISSING BUT FOUND","MY STEPMOTHER'S DAUGHTER","SECRETS OF THE LETTER","SHATTERED VOWS","THE ABANDONED HUTS","THE FOOD SELLER","THE STOLEN BABY","AMARA","THE MARKET GIRL","THE RIVER BRIDE","THE SLAVE TRADE","THE TWINS","THE WHITE MAN","THE LIBRARY SECRET","FORGOTTEN PROMISE","DEATH OF NO RETURN","FOREST OF NO RETURN","THE GENEROUS HUNTER","THE HEADMASTER SECRET"];
+   movie={title:allP[idx]||"Story",subtitle:"Add story in Admin",story:"No story added yet for this poster. Go to Admin > Select this poster > Write story > Save!",image:"AMARA.jpg"};
+ }
+ if(!movie){document.getElementById('title').innerText="Story not found";return;}
+ document.getElementById('poster').src=movie.image;
+ document.getElementById('title').innerText=movie.title;
+ document.getElementById('subtitle').innerText=movie.subtitle||"";
+ document.getElementById('story').innerText=movie.story;
+ document.getElementById('views').innerText="👁️ "+(movie.views||1)+" views";
+ buildCharButtons();
+}
+
+function loadVoices(){
+ voices=speechSynthesis.getVoices();
+ let sel=document.getElementById('voiceSelect');sel.innerHTML="";
+ voices.forEach((v,i)=>{
+  let opt=document.createElement('option');opt.value=i;opt.textContent=v.name+" ("+v.lang+")";
+  if(v.name.includes('Female')||v.name.includes('Zira')||v.name.includes('Google UK English Female')) opt.selected=true;
+  sel.appendChild(opt);
+ });
+}
+speechSynthesis.onvoiceschanged=loadVoices;setTimeout(loadVoices,500);
+
+function getVoiceForCharacter(charName){
+ charName=charName.toLowerCase().trim();
+ let config=charVoices[charName]||charVoices['narrator'];
+ let preferred=null;
+ if(config.voiceType==='oldMan') preferred=voices.find(v=>v.name.toLowerCase().includes('male')||v.name.includes('David'))||voices[0];
+ else if(config.voiceType==='oldWoman') preferred=voices.find(v=>v.name.toLowerCase().includes('female')&&v.lang.includes('UK'))||voices.find(v=>v.name.includes('Zira'))||voices[0];
+ else if(config.voiceType==='youngMale') preferred=voices.find(v=>v.name.includes('Male')||v.name.includes('David')||v.lang.includes('en-US'))||voices[0];
+ else if(config.voiceType==='youngFemale') preferred=voices.find(v=>v.name.includes('Female')||v.name.includes('Zira')||v.name.includes('Google'))||voices[0];
+ else if(config.voiceType==='childBoy') preferred=voices.find(v=>v.name.includes('Male'))||voices[0];
+ else if(config.voiceType==='childGirl') preferred=voices.find(v=>v.name.includes('Female'))||voices[0];
+ else preferred=voices[document.getElementById('voiceSelect').value]||voices[0];
+ return {voice:preferred,config};
+}
+
+function buildCharButtons(){
+ let cont=document.getElementById('charButtons');cont.innerHTML="";
+ let story=document.getElementById('story').innerText.toLowerCase();
+ let found=new Set();
+ Object.keys(charVoices).forEach(k=>{if(story.includes(k+':')) found.add(k);});
+ if(found.size===0) found=new Set(['narrator','king','queen mother','prince','keleshi','guard','maid']);
+ let html="";found.forEach(c=>{let cfg=charVoices[c];html+=`<span class="chip">${cfg.label||c}</span>`;});
+ document.getElementById('charList').innerHTML=html;
+ // buttons
+ cont.innerHTML=`<button class="voice-btn" onclick="playWithChar('narrator')">🎙️ Narrator</button>
+ <button class="voice-btn" onclick="playWithChar('king')">👑 King</button>
+ <button class="voice-btn" onclick="playWithChar('queen mother')">👵 Queen Mother</button>
+ <button class="voice-btn" onclick="playWithChar('prince')">🤴 Prince</button>
+ <button class="voice-btn" onclick="playWithChar('keleshi')">👸 Keleshi</button>
+ <button class="voice-btn" onclick="playWithChar('guard')">💂 Guard</button>
+ <button class="voice-btn" onclick="playWithChar('maid')">👩‍🍳 Maid</button>
+ <button class="voice-btn" onclick="playWithChar('boy')">👦 Boy</button>`;
+}
+
+let currentChar='narrator';
+function playWithChar(char){currentChar=char;playStory(char);}
+
+function setAccent(a){
+ currentAccent=a;
+ let btns=document.querySelectorAll('.voice-btn');btns.forEach(b=>b.classList.remove('active'));
+ event.target.classList.add('active');
+ if(a==='ghana'){alert('🇬🇭 Ghana accent: Slower + warm tone');}
+ if(a==='pidgin'){alert('🇳🇬 Pidgin mode: Will add "Chai, my pikin..." style');}
+}
+
+function playStory(forceChar=null){
+ stopStory();
+ let text=document.getElementById('story').innerText;
+ let lines=text.split('\n');
+ let index=0;
+ function speakNext(){
+  if(index>=lines.length) return;
+  let line=lines[index].trim();index++;
+  if(!line){speakNext();return;}
+  let charDetect=line.split(':')[0].toLowerCase().trim();
+  let charToUse=forceChar|| (charVoices[charDetect]?charDetect:'narrator');
+  let actualText=line.includes(':')?line.split(':').slice(1).join(':'):line;
+  if(currentAccent==='pidgin' && Math.random()>0.7) actualText="Chai! "+actualText+" my pikin";
+  let {voice,config}=getVoiceForCharacter(charToUse);
+  utterance=new SpeechSynthesisUtterance(actualText);
+  utterance.voice=voice;
+  utterance.rate=config.rate*(currentAccent==='ghana'?0.85:1);
+  utterance.pitch=config.pitch;
+  utterance.onend=speakNext;
+  speechSynthesis.speak(utterance);
+ }
+ speakNext();
+}
+function pauseStory(){if(speechSynthesis.speaking){speechSynthesis.paused?speechSynthesis.resume():speechSynthesis.pause();}}
+function stopStory(){speechSynthesis.cancel();}
+loadStory();
+</script></body></html>
