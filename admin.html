@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zeenatflix Admin - 19 STATICS</title>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:10px;margin:0}
+.card{background:#1a1a1a;border-radius:16px;padding:14px;margin:10px 0}
+select,input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:none;background:#2a2a2a;color:#fff}
+button{width:100%;padding:13px;margin:5px 0;border:none;border-radius:12px;font-weight:bold;cursor:pointer}
+.voice-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vbtn{background:#2a2a2a;font-size:12px;padding:12px;border-radius:10px;color:#fff;border:2px solid #333}
+.vbtn.active{background:#ff0066;border-color:#ff0066}
+.green{background:#00c853;color:#fff}.orange{background:#ff6d00;color:#fff}.pink{background:#ff0066;color:#fff}.dark{background:#333;color:#fff}
+#sub{background:#000;padding:16px;border:3px solid #ff0066;border-radius:14px;min-height:90px;display:block;margin-top:12px}
+#subText{color:#fff;font-size:18px;line-height:1.8;text-align:center;font-weight:bold}
+.poster-preview{width:100%;max-height:300px;object-fit:contain;border-radius:12px;margin:10px 0;border:2px solid #333}
+</style>
+</head>
+<body>
+<div id="loginBox" class="card">
+<h2>🔐 Admin Login</h2>
+<input id="pass" type="password" placeholder="Enter Password">
+<button onclick="login()" class="pink">Login</button>
+</div>
+<div id="adminPanel" style="display:none">
+<div class="card">
+<h3>📸 YOUR 19 STATIC POSTERS</h3>
+<select id="ps" onchange="changePoster()"></select>
+<img id="posterImg" class="poster-preview" src="">
+<input id="ptitle" placeholder="Title">
+<textarea id="pdesc" rows="2" placeholder="Short Description"></textarea>
+<textarea id="pfull" rows="10" placeholder="KING: Hello my queen
+QUEEN: Yes my king"></textarea>
+<input type="file" id="imgIn" accept="image/*">
+<label>🌍 Language</label>
+<select id="lang"></select>
+<label>🎤 20 Voices - Tap to Test with Subtitles</label>
+<div id="vgrid" class="voice-grid"></div>
+<div id="sub"><div id="subText">🎬 Yellow karaoke subtitles will show here...</div></div>
+<button onclick="playAll()" class="green">▶️ PLAY ALL (Multi-Voice Movie)</button>
+<button onclick="pauseAll()" class="orange">⏸️ PAUSE / RESUME</button>
+<button onclick="stopAll()" class="dark">⏹️ STOP</button>
+<button onclick="postToBoth()" class="pink">📤 POST TO WORLD + HOME</button>
+<button onclick="logout()" class="dark">Logout</button>
+</div>
+<div class="card"><h3>📋 Posted</h3><div id="plist"></div></div>
+</div>
+<script>
+const PASS="Papaja6869$$";
+const myTitles={
+p1:{title:"AMARA",img:"AMARA.jpg"},
+p2:{title:"THE LIBRARY SECRET",img:"THE-LIBRARY-SECRET.jpg"},
+p3:{title:"THE RIVER BRIDE",img:"THE-RIVER-BRIDE.jpg"},
+p4:{title:"THE STOLEN BABY",img:"THE-STOLEN-BABY.jpg"},
+p5:{title:"THE WHITE MAN",img:"THE-WHITE-MAN.jpg"},
+p6:{title:"THE ABANDONED HUTS",img:"THE-ABANDONED-HUTS.jpg"},
+p7:{title:"THE TWINS",img:"THE-TWINS.jpg"},
+p8:{title:"MISSING BUT FOUND",img:"MISSING-BUT-FOUND.jpg"},
+p9:{title:"SECRETS OF THE LETTER",img:"SECRETS -OF-THE-LETTER.jpg"},
+p10:{title:"THE GENEROUS HUNTER",img:"THE-GENEROUS-HUNTER.jpg"},
+p11:{title:"THE FOOD SELLER",img:"THE-FOOD-SELLER.jpg"},
+p12:{title:"THE SLAVE TRADE",img:"THE-SLAVE-TRADE.jpg"},
+p13:{title:"THE HEADMASTER SECRET",img:"THE-HEADMASTER-SECRET.jpg"},
+p14:{title:"FORGOTTEN PROMISE",img:"FORGOTTEN-PROMISE.jpg"},
+p15:{title:"THE MARKET GIRL",img:"THE-MARKET-GIRL.jpg"},
+p16:{title:"MY STEPMOTHERS DAUGHTER",img:"MY-STEPMOTHERS-DAUGHTER.jpg"},
+p17:{title:"FOREST OF NO RETURN",img:"FOREST-OF-NO-RETURN.jpg"},
+p18:{title:"SHATTERED VOW",img:"SHATTERED-VOW.jpg"},
+p19:{title:"DEATH OF NO RETURN",img:"DEATH-OF-NO-RETURN.jpg"}
+};
+const posters=Object.keys(myTitles);
+let curPoster="p1"; let curVoice=0; let curLang="en-GH";
+let allPosts=JSON.parse(localStorage.getItem('posts')||'[]');
+let lastImage="";
+const MY_LANGS=[{code:"en-GH",name:"🇬🇭 Ghana English"},{code:"en-NG",name:"🇳🇬 Nigeria"},{code:"en-GB",name:"🇬🇧 British"},{code:"en-US",name:"🇺🇸 US"},{code:"ig-NG",name:"🇳🇬 Igbo"},{code:"yo-NG",name:"🇳🇬 Yoruba"},{code:"tw-GH",name:"🇬🇭 Twi"},{code:"ak-GH",name:"🇬🇭 Akan"},{code:"ha-NG",name:"🇳🇬 Hausa"}];
+let voices=[];
+const VOICE_NAMES=["Narrator Male","Narrator Female","King Deep","Queen Mother","Prince","Princess Amara","Old Chief","Old Woman","Boy Child","Girl Child","Guard Deep","Maid Soft","Pastor Male","Warrior Male","Witch Female","Husband","Wife","Friend Male","Friend Female","Crying Girl"];
+
+function changePoster(){
+ curPoster=document.getElementById('ps').value;
+ let data=myTitles[curPoster];
+ document.getElementById('ptitle').value=data.title;
+ let imgEl=document.getElementById('posterImg');
+ imgEl.src=data.img;
+ imgEl.onerror=()=>{ imgEl.src=data.img.replace(/ /g,'%20'); };
+}
+
+function loadGhanaVoices(){
+ let sel=document.getElementById('lang'); let grid=document.getElementById('vgrid');
+ sel.innerHTML=""; MY_LANGS.forEach(L=>{ let o=document.createElement('option'); o.value=L.code; o.textContent=L.name; sel.appendChild(o); });
+ sel.value=curLang;
+ voices=window.speechSynthesis.getVoices();
+ grid.innerHTML="";
+ VOICE_NAMES.forEach((n,i)=>{
+  let b=document.createElement('button'); b.textContent=n; b.className='vbtn'+(i===curVoice?' active':''); b.id='v'+i;
+  b.onclick=()=>{ document.querySelectorAll('.vbtn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); curVoice=i; playSingleVoice(n); };
+  grid.appendChild(b);
+ });
+}
+window.speechSynthesis.onvoiceschanged=loadGhanaVoices;
+setTimeout(loadGhanaVoices,500); setTimeout(loadGhanaVoices,1500);
+function getGhanaVoice(){ if(voices.length===0) voices=window.speechSynthesis.getVoices(); let c=document.getElementById('lang')?.value||'en-GH'; return voices.find(x=>x.lang===c) || voices.find(x=>x.lang.includes('en')) || voices[0]; }
+
+function playSingleVoice(name){
+ window.speechSynthesis.cancel();
+ let subText=document.getElementById('subText');
+ let sentence="This is "+name+". Welcome to Zeenatflix Ghana.";
+ subText.innerHTML='<b style="color:#ff0066">'+name+':</b> '+sentence;
+ let u=new SpeechSynthesisUtterance(sentence); let gv=getGhanaVoice(); if(gv) u.voice=gv;
+ if(name.includes('Deep')||name.includes('King')||name.includes('Chief')){u.pitch=0.5; u.rate=0.85;} else if(name.includes('Queen')||name.includes('Princess')||name.includes('Girl')||name.includes('Wife')){u.pitch=1.4; u.rate=1.0;} else if(name.includes('Boy')||name.includes('Child')){u.pitch=1.7; u.rate=1.1;}
+ u.onboundary=(e)=>{ let pos=e.charIndex; let len=e.charLength||5; let before=sentence.substring(0,pos); let word=sentence.substring(pos,pos+len); let after=sentence.substring(pos+len); subText.innerHTML='<b style="color:#ff0066">'+name+':</b> '+before+'<span style="background:yellow;color:#000;padding:4px 7px;border-radius:6px;font-weight:bold;font-size:20px;">'+word+'</span>'+after; };
+ u.onend=()=>{ subText.innerHTML='✅ Finished: '+name; };
+ window.speechSynthesis.speak(u);
+}
+function playAll(){
+ window.speechSynthesis.cancel();
+ let txt=document.getElementById('pfull').value.trim(); if(!txt){ alert('Write script first!'); return; }
+ let lines=txt.split('\n').filter(l=>l.trim()); let i=0;
+ const map={'KING':'King Deep','QUEEN':'Queen Mother','PRINCE':'Prince','PRINCESS AMARA':'Princess Amara','PRINCESS':'Princess Amara','NARRATOR':'Narrator Male','OLD CHIEF':'Old Chief','OLD WOMAN':'Old Woman','BOY CHILD':'Boy Child','GIRL CHILD':'Girl Child','BOY':'Boy Child','GIRL':'Girl Child','GUARD':'Guard Deep','MAID':'Maid Soft','PASTOR':'Pastor Male','WARRIOR':'Warrior Male','WITCH':'Witch Female','HUSBAND':'Husband','WIFE':'Wife','FRIEND MALE':'Friend Male','FRIEND FEMALE':'Friend Female'};
+ let subText=document.getElementById('subText');
+ function next(){
+  if(i>=lines.length){ subText.innerHTML="✅ Movie Finished!"; return; }
+  let line=lines[i]; let parts=line.split(':'); let who=parts[0].trim().toUpperCase(); let say=parts.slice(1).join(':').trim()||line;
+  let vName=map[who]||'Narrator Male';
+  let idx=VOICE_NAMES.indexOf(vName); if(idx>=0){ document.querySelectorAll('.vbtn').forEach(x=>x.classList.remove('active')); let b=document.getElementById('v'+idx); if(b) b.classList.add('active'); }
+  subText.innerHTML='<b style="color:#ff0066">'+vName+':</b> '+say;
+  let ut=new SpeechSynthesisUtterance(say); let gv=getGhanaVoice(); if(gv) ut.voice=gv;
+  if(vName.includes('Deep')||vName.includes('King')||vName.includes('Chief')){ut.pitch=0.5; ut.rate=0.85;} else if(vName.includes('Queen')||vName.includes('Princess')||vName.includes('Girl')||vName.includes('Wife')){ut.pitch=1.4; ut.rate=1.0;} else if(vName.includes('Boy')||vName.includes('Child')){ut.pitch=1.7; ut.rate=1.1;}
+  ut.onboundary=(e)=>{ let pos=e.charIndex; let len=e.charLength||4; let before=say.substring(0,pos); let word=say.substring(pos,pos+len); let after=say.substring(pos+len); subText.innerHTML='<b style="color:#ff0066">'+vName+':</b> '+before+'<span style="background:yellow;color:#000;padding:4px 7px;border-radius:6px;font-weight:bold;font-size:20px">'+word+'</span>'+after; };
+  ut.onend=()=>{ i++; setTimeout(next,600); };
+  window.speechSynthesis.speak(ut);
+ }
+ next();
+}
+function pauseAll(){ if(window.speechSynthesis.paused) window.speechSynthesis.resume(); else window.speechSynthesis.pause(); }
+function stopAll(){ window.speechSynthesis.cancel(); document.getElementById('subText').innerHTML='⏹️ Stopped'; }
+document.getElementById('imgIn').addEventListener('change',function(){ let f=this.files[0]; if(!f) return; let r=new FileReader(); r.onload=e=>{lastImage=e.target.result; document.getElementById('posterImg').src=lastImage;}; r.readAsDataURL(f); });
+function init(){
+ let s=document.getElementById('ps'); s.innerHTML=""; posters.forEach(p=>{ let o=document.createElement('option'); o.value=p; o.textContent=myTitles[p].title+" ("+p+")"; s.appendChild(o); });
+ s.value=curPoster; changePoster(); renderList(); loadGhanaVoices();
+}
+function login(){ let p=document.getElementById('pass').value.trim(); if(p===PASS){ localStorage.setItem('admin_ok','1'); document.getElementById('loginBox').style.display='none'; document.getElementById('adminPanel').style.display='block'; init(); } else alert('Wrong password!'); }
+function logout(){localStorage.removeItem('admin_ok'); location.reload();}
+if(localStorage.getItem('admin_ok')=='1'){ document.getElementById('loginBox').style.display='none'; document.getElementById('adminPanel').style.display='block'; setTimeout(init,500); }
+function postToBoth(){
+ let title=document.getElementById('ptitle').value; let desc=document.getElementById('pdesc').value; let full=document.getElementById('pfull').value;
+ if(!title) return alert('Add title'); let img=document.getElementById('posterImg').src;
+ let post={id:curPoster,title:title,desc:desc,full:full,img:img||lastImage,voice:curVoice,lang:curLang};
+ allPosts=allPosts.filter(p=>p.id!=curPoster); allPosts.unshift(post); localStorage.setItem('posts',JSON.stringify(allPosts));
+ let worldPosts=JSON.parse(localStorage.getItem('worldPosts')||'[]'); worldPosts=worldPosts.filter(p=>p.id!=curPoster); worldPosts.unshift(post); localStorage.setItem('worldPosts',JSON.stringify(worldPosts));
+ renderList(); alert('✅ POSTED: '+title+'!');
+}
+function renderList(){ let d=document.getElementById('plist'); if(!d) return; d.innerHTML=allPosts.map(p=>`<div style='background:#222;padding:8px;margin:5px 0;border-radius:8px;display:flex;align-items:center;gap:8px'><img src='${p.img}' style='width:40px;height:60px;object-fit:cover;border-radius:4px'>${p.title} - ${p.id}</div>`).join(''); }
+</script>
+</body>
+</html>
