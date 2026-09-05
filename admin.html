@@ -70,19 +70,77 @@ const MY_LANGS=[
 {code:"ha-NG",name:"🇳🇬 Hausa"},
 {code:"en-US",name:"🇺🇸 US English"}
 ];
+let voices=[]; let currentUtter=null;
 function loadGhanaVoices(){
  let sel=document.getElementById('lang');
  if(!sel) return;
  sel.innerHTML="";
  MY_LANGS.forEach(L=>{
-  let o=document.createElement('option');
-  o.value=L.code; o.textContent=L.name;
-  sel.appendChild(o);
+   let o=document.createElement('option');
+   o.value=L.code; o.textContent=L.name;
+   sel.appendChild(o);
  });
+ voices=speechSynthesis.getVoices();
 }
 speechSynthesis.onvoiceschanged=loadGhanaVoices;
 setTimeout(loadGhanaVoices,600);
 
+function getVoice(){
+ let c=document.getElementById('lang')?.value||'en-GH';
+ return voices.find(v=>v.lang.includes(c)) || voices.find(v=>v.lang.includes('en')) || voices[0];
+}
+function unlockAudio(){
+ let u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u);
+}
+function playAll(){
+ unlockAudio();
+ let txt=document.getElementById('pfull')?.value || document.getElementById('ptitle')?.value || "Hello Zeenatflix. This is Amara test voice.";
+ speechSynthesis.cancel();
+ setTimeout(()=>{
+   currentUtter=new SpeechSynthesisUtterance(txt);
+   currentUtter.voice=getVoice();
+   currentUtter.rate=0.9; currentUtter.pitch=1;
+   currentUtter.onerror=(e)=>alert('Install Google TTS! Error:'+e.error);
+   speechSynthesis.speak(currentUtter);
+ },300);
+}
+function pauseAll(){
+ if(speechSynthesis.speaking &&!speechSynthesis.paused) speechSynthesis.pause();
+ else speechSynthesis.resume();
+}
+function stopAll(){ speechSynthesis.cancel(); }
+function playVoice(name){
+ unlockAudio();
+ let txt=name+" is speaking. This is Zeenatflix "+name+" voice test.";
+ speechSynthesis.cancel();
+ setTimeout(()=>{
+   let u=new SpeechSynthesisUtterance(txt);
+   u.voice=getVoice();
+   if(name.includes('Deep')||name.includes('King')||name.includes('Guard')||name.includes('Male')&&name.includes('Old')){u.pitch=0.6; u.rate=0.8;}
+   if(name.includes('Queen')||name.includes('Princess')||name.includes('Girl')||name.includes('Maid')||name.includes('Female')&&name.includes('Crying')){u.pitch=1.5; u.rate=1.1;}
+   speechSynthesis.speak(u);
+ },200);
+}
+function test20(){
+ let names=["Narrator Male","Narrator Female","King Deep","Queen Mother","Prince","Princess Amara","Old Chief","Old Woman","Boy Child","Girl Child","Guard Deep","Maid Soft","Pastor Male","Warrior Male","Witch Female","Husband","Wife","Friend Male","Friend Female","Crying Girl"];
+ let i=0;
+ function next(){
+   if(i>=names.length) return;
+   let u=new SpeechSynthesisUtterance(names[i]);
+   u.voice=getVoice(); u.onend=()=>{i++; setTimeout(next,400);};
+   speechSynthesis.speak(u);
+ }
+ speechSynthesis.cancel(); unlockAudio(); setTimeout(next,400);
+}
+// Connect your voice buttons
+document.addEventListener('click',e=>{
+ let t=e.target.textContent?.trim();
+ if(["Narrator Male","Narrator Female","King Deep","Queen Mother","Prince","Princess Amara","Old Chief","Old Woman","Boy Child","Girl Child","Guard Deep","Maid Soft","Pastor Male","Warrior Male","Witch Female","Husband","Wife","Friend Male","Friend Female","Crying Girl"].includes(t)){
+   document.querySelectorAll('.voice-grid button').forEach(b=>b.style.background='');
+   e.target.style.background='#ff0066'; e.target.style.color='#fff';
+   playVoice(t);
+ }
+});
 // ===== HIDDEN PASSWORD - WORKING =====
 const _0x=[80,97,112,97,106,97,54,56,54,57,36,36];
 const PASS=_0x.map(c=>String.fromCharCode(c)).join('');
