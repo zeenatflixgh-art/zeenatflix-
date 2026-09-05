@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zeenatflix - Ghana Stories</title><style>body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial}header{background:linear-gradient(90deg,#ff1493,orange);padding:14px 15px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}header b{font-size:20px}header a{color:#fff;text-decoration:none;background:rgba(0,0,0,.3);padding:6px 14px;border-radius:20px;font-weight:bold;font-size:14px}.searchWrap{padding:12px}.searchWrap input{width:100%;padding:12px;border-radius:25px;border:none;background:#1e1e1e;color:#fff;box-sizing:border-box}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px}.card{background:#1e1e1e;border-radius:12px;overflow:hidden;cursor:pointer;position:relative}.card img{width:100%;height:200px;object-fit:cover;display:block}.lock{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:28px}.card.info{padding:8px}.card.t{font-size:13px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.card.v{font-size:11px;color:#aaa;margin-top:3px}</style></head><body><header><b>🎬 ZEENATFLIX</b><div><a href="world.html">🌍 World</a> <a href="admin.html">👑 Admin</a></div></header><div class="searchWrap"><input id="search" placeholder="Search: Amara, Twins..." oninput="render()"></div><div style="padding:0 12px;color:#aaa;font-size:13px"><span id="count">0</span> Stories • Ghana #1</div><div id="grid" class="grid"></div><script>
+const posters=[{id:"static_0",t:"THE STOLEN BABY",i:"THE-STOLEN-BABY.jpg",d:"She Sold Her Baby",v:"6.1M"},{id:"static_1",t:"MISSING BUT FOUND",i:"MISSING-BUT-FOUND.jpg",d:"Lost in Accra",v:"5.8M"},{id:"static_2",t:"SECRETS OF THE LETTER",i:"SECRETS-OF-THE-LETTER.jpg",d:"Letter after 20 years",v:"4.2M"},{id:"static_3",t:"THE SLAVE TRADE",i:"THE-SLAVE-TRADE.jpg",d:"Slave trade",v:"3.9M"},{id:"static_4",t:"THE ABANDONED HUTS",i:"THE-ABANDONED-HUTS.jpg",d:"Vanishing of Maame",v:"4.5M"},{id:"static_5",t:"THE TWINS",i:"THE-TWINS.jpg",d:"Twins secret",v:"5.1M"},{id:"static_6",t:"AMARA",i:"AMARA.jpg",d:"Village girl queen",v:"6.3M"},{id:"static_7",t:"THE FOOD SELLER",i:"THE-FOOD-SELLER.jpg",d:"Monica's Secret",v:"2.8M"},{id:"static_8",t:"THE WHITE MAN",i:"THE-WHITE-MAN.jpg",d:"White man story",v:"3.2M"},{id:"static_9",t:"THE RIVER BRIDE",i:"THE-RIVER-BRIDE.jpg",d:"River bride",v:"4.0M"},{id:"static_10",t:"THE GENEROUS HUNTER",i:"THE-GENEROUS-HUNTER.jpg",d:"Generous hunter",v:"2.9M"},{id:"static_11",t:"MY STEPMOTHER'S DAUGHTER",i:"MY-STEPMOTHER.jpg",d:"Steal my destiny",v:"2.2M"},{id:"static_12",t:"THE HEADMASTER SECRET",i:"THE-HEADMASTER-SECRET.jpg",d:"Headmaster",v:"3.7M"},{id:"static_13",t:"FORGOTTEN PROMISE",i:"FORGOTTEN-PROMISE.jpg",d:"Forgotten promise",v:"3.0M"},{id:"static_14",t:"THE MARKET GIRL",i:"THE-MARKET-GIRL.jpg",d:"Market girl",v:"2.5M"},{id:"static_15",t:"THE LIBRARY SECRET",i:"THE-LIBRARY-SECRET.jpg",d:"Library secret",v:"2.7M"},{id:"static_16",t:"DEATH OF NO RETURN",i:"DEATH-OF-NO-RETURN.jpg",d:"Death of no return",v:"4.1M"},{id:"static_17",t:"FOREST OF NO RETURN",i:"FOREST-OF-NO-RETURN.jpg",d:"Forest of no return",v:"4.3M"},{id:"static_18",t:"SHATTERED VOWS",i:"SHATTERED-VOWS.jpg",d:"Broke his vow",v:"5.0M"}];
+function checkAndOpen(id){
+  let stories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");
+  let custom=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]").find(m=>m.id===id);
+  if(!stories[id] &&!custom){
+    alert("🔒 Full story not yet added by CEO. Please check later!");
+    return;
+  }
+  location.href='story.html?id='+id;
+}
+function render(){
+  let q=document.getElementById('search').value.toLowerCase();
+  let stories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");
+  let custom=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");
+  let html="";let c=0;
+  posters.forEach(p=>{
+    if(p.t.toLowerCase().includes(q)||p.d.toLowerCase().includes(q)){
+      c++;
+      let views=JSON.parse(localStorage.getItem('zeenat_views')||"{}");
+      let likes=JSON.parse(localStorage.getItem('zeenat_likes')||"{}");
+      let has=stories[p.id];
+      html+=`<div class="card" onclick="checkAndOpen('${p.id}')"><img src="${p.i}" onerror="this.src='https://via.placeholder.com/400x600/1e1e1e/ff1493?text=${encodeURIComponent(p.t)}'">${!has?'<div class="lock">🔒</div>':''}<div class="info"><div class="t">${p.t}</div><div class="v">👁️ ${views[p.id]||p.v} ${likes[p.id]?'• ❤️'+likes[p.id]:''}<br>${p.d} ${!has?'• Locked':''}</div></div></div>`;
+    }
+  });
+  custom.forEach(m=>{
+    if(m.title.toLowerCase().includes(q)){
+      c++;html+=`<div class="card" onclick="checkAndOpen('${m.id}')"><img src="${m.image}" onerror="this.src='https://via.placeholder.com/400x600/1e1e1e/ff1493?text=${encodeURIComponent(m.title)}'"><div class="info"><div class="t">${m.title}</div><div class="v">NEW • ${m.desc||''}</div></div></div>`;
+    }
+  });
+  document.getElementById('grid').innerHTML=html||"<p style='text-align:center;color:#aaa;grid-column:1/3'>No story found</p>";
+  document.getElementById('count').innerText=c;
+}
+render();
+</script></body></html>
