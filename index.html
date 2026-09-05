@@ -1,0 +1,14 @@
+function checkAndOpen(id){
+ let stories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");
+ let custom=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");
+ let found=custom.find(m=>m.id===id);
+ if(!stories[id] &&!found){
+   alert("🔒 Full story not yet added by CEO. Please check later!");
+   return;
+ }
+ if(stories[id] && stories[id].length<20){
+   alert("🔒 Story empty!");
+   return;
+ }
+ location.href='story.html?id='+id;
+}
