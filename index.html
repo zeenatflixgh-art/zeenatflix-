@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZEENATFLIX GH - Ghana Stories | Amara, Food Seller, River Bride</title>
+<style>
+body{margin:0;background:#121212;color:#fff;font-family:Arial}
+header{background:linear-gradient(90deg,#9c27b0,#ff1493,orange);padding:18px;text-align:center;position:sticky;top:0;z-index:99;box-shadow:0 2px 10px rgba(0,0,0,0.5)}
+header h1{margin:0;font-size:28px;letter-spacing:2px;font-weight:900}
+.searchBox{padding:12px;background:#1a1a1a;position:sticky;top:68px;z-index:98}
+#search{width:100%;padding:14px;border-radius:25px;border:1px solid #333;background:#2a2a2a;color:#fff;font-size:15px;box-sizing:border-box}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px}
+.card{background:#1e1e1e;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid #2a2a2a;position:relative;transition:0.2s}
+.card:hover{transform:scale(1.02);border-color:#ff1493}
+.card img{width:100%;height:240px;object-fit:cover}
+.card.info{padding:10px}
+.card h3{margin:0;font-size:12px;color:#ff79c6;text-transform:uppercase}
+.card p{margin:6px 0 0;font-size:14px;font-weight:bold;line-height:1.2}
+.meta{font-size:11px;color:#888;display:flex;gap:12px;margin-top:6px}
+.locked img{filter:brightness(0.4) grayscale(0.3)}
+.lock-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);padding:8px 14px;border-radius:20px;font-size:18px;border:1px solid #444}
+</style>
+</head><body>
+<header><h1>ZEENATFLIX</h1><p style="margin:5px 0 0;font-size:13px;opacity:0.9"><span id="total">19</span> Stories - Click to read</p></header>
+<div class="searchBox"><input type="text" id="search" placeholder="🔍 Search inside app... Amara, Food Seller" onkeyup="render()"></div>
+<div class="grid" id="grid"></div>
+<div style="text-align:center;padding:25px;color:#121212;font-size:1px"><a href="admin.html" style="color:#121212">.</a> © Zeenatflix</div>
+<script>
+const posters=[
+{id:"static_0",t:"THE STOLEN BABY",d:"Stolen Child",i:"THE-STOLEN-BABY.jpg"},
+{id:"static_1",t:"MISSING BUT FOUND",d:"Lost 7 Years",i:"MISSING-BUT-FOUND.jpg"},
+{id:"static_2",t:"SECRETS OF THE LETTER",d:"Letter Secret",i:"SECRETS-OF-THE-LETTER.jpg"},
+{id:"static_3",t:"THE SLAVE TRADE",d:"Slave Story",i:"THE-SLAVE-TRADE.jpg"},
+{id:"static_4",t:"THE ABANDONED HUTS",d:"Hut Secrets",i:"THE-ABANDONED-HUTS.jpg"},
+{id:"static_5",t:"THE TWINS",d:"Twin Drama",i:"THE-TWINS.jpg"},
+{id:"static_6",t:"AMARA",d:"Housegirl To Bride",i:"AMARA.jpg"},
+{id:"static_7",t:"THE FOOD SELLER",d:"Market Story",i:"THE-FOOD-SELLER.jpg"},
+{id:"static_8",t:"THE WHITE MAN",d:"White Man",i:"THE-WHITE-MAN.jpg"},
+{id:"static_9",t:"THE RIVER BRIDE",d:"Love Beyond Waters",i:"THE-RIVER-BRIDE.jpg"},
+{id:"static_10",t:"THE GENEROUS HUNTER",d:"Golden Heart",i:"THE-GENEROUS-HUNTER.jpg"},
+{id:"static_11",t:"MY STEPMOTHER'S DAUGHTER",d:"Stepmother",i:"MY-STEPMOTHER.jpg"},
+{id:"static_12",t:"THE HEADMASTER SECRET",d:"School Secret",i:"THE-HEADMASTER-SECRET.jpg"},
+{id:"static_13",t:"FORGOTTEN PROMISE",d:"Promise",i:"FORGOTTEN-PROMISE.jpg"},
+{id:"static_14",t:"THE MARKET GIRL",d:"Market Girl",i:"THE-MARKET-GIRL.jpg"},
+{id:"static_15",t:"THE LIBRARY SECRET",d:"Book Survived Fire",i:"THE-LIBRARY-SECRET.jpg"},
+{id:"static_16",t:"DEATH OF NO RETURN",d:"Death Story",i:"DEATH-OF-NO-RETURN.jpg"},
+{id:"static_17",t:"FOREST OF NO RETURN",d:"Forest",i:"FOREST-OF-NO-RETURN.jpg"},
+{id:"static_18",t:"SHATTERED VOWS",d:"Vows",i:"SHATTERED-VOWS.jpg"}
+];
+function checkAndOpen(id){
+ let stories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");
+ let custom=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]").find(m=>m.id==id);
+ if(!stories[id] &&!custom){
+  alert("⏳ Coming Soon! This story is not ready yet. Please try another one 🔓");
+  return;
+ }
+ location.href='story.html?id='+id;
+}
+function render(){
+ let q=document.getElementById('search').value.toLowerCase();
+ let stories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");
+ let customMovies=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");
+ let all=[...posters];
+ customMovies.forEach(cm=>{ if(!all.find(p=>p.id==cm.id)){ all.unshift({id:cm.id,t:cm.title,d:cm.desc||"New Story",i:cm.image}); } });
+ let html="";let c=0;
+ all.forEach(p=>{
+  if(p.t.toLowerCase().includes(q)||p.d.toLowerCase().includes(q)){
+   c++;
+   let views=JSON.parse(localStorage.getItem('zeenat_views')||"{}")[p.id]||0;
+   let likes=JSON.parse(localStorage.getItem('zeenat_likes')||"{}")[p.id]||0;
+   let has=stories[p.id]||customMovies.find(m=>m.id==p.id);
+   let imgData=localStorage.getItem('zeenat_poster_img_'+p.id);
+   let imgSrc=imgData||p.i;
+   let lockHtml =!has? `<div class="lock-badge">🔒</div>` : `<div style="position:absolute;top:8px;right:8px;background:rgba(0,255,100,0.9);color:#000;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:bold">🔓 OPEN</div>`;
+   html+=`<div class="card ${!has?'locked':''}" onclick="checkAndOpen('${p.id}')"><img src="${imgSrc}" onerror="this.src='https://via.placeholder.com/300x400?text=${encodeURIComponent(p.t)}'">${lockHtml}<div class="info"><h3>${p.t}</h3><p>${p.d}</p><div class="meta"><span>👁️ ${views}</span><span>❤️ ${likes}</span></div></div></div>`;
+  }
+ });
+ document.getElementById('grid').innerHTML=html||"<p style='text-align:center;grid-column:1/3;color:#777'>No story found</p>";
+ document.getElementById('total').innerText=c;
+}
+render();
+</script></body></html>
