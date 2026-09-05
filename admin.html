@@ -1,0 +1,65 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADMIN - Zeenatflix</title>
+<style>body{background:#111;color:#fff;font-family:Arial;padding:15px}input,textarea,select{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:1px solid #333;background:#222;color:#fff;box-sizing:border-box}button{background:#00ff88;color:#000;padding:14px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;width:100%;margin-top:10px}.card{background:#1e1e1e;padding:15px;border-radius:10px;margin:10px 0}</style>
+</head><body>
+<h2>🔐 ZEENATFLIX ADMIN - SMART POSTING</h2>
+<div class="card">
+<h3>Post New Story</h3>
+<input id="title" placeholder="Story Title - e.g. AMARA">
+<textarea id="desc" placeholder="Short Description"></textarea>
+<textarea id="story" placeholder="Full Story Text - Part 1, Part 2..." rows="8"></textarea>
+<input id="image" type="file" accept="image/*">
+<select id="category" style="border:2px solid #00ff88">
+<option value="both">🌍 BOTH - Show in HOME + WORLD</option>
+<option value="africa" selected>🏠 HOME ONLY - Africa / Ghana</option>
+<option value="world">🌎 WORLD ONLY - Foreign</option>
+</select>
+<button onclick="post()">POST STORY 🚀</button>
+</div>
+<div class="card">
+<h3>Change Poster Image</h3>
+<select id="posterSelect"></select>
+<input id="posterImage" type="file" accept="image/*">
+<button onclick="changePoster()">CHANGE POSTER IMAGE</button>
+</div>
+<div id="list"></div>
+<script>
+const posters=["THE STOLEN BABY","MISSING BUT FOUND","SECRETS OF THE LETTER","THE SLAVE TRADE","THE ABANDONED HUTS","THE TWINS","AMARA","THE FOOD SELLER","THE WHITE MAN","THE RIVER BRIDE","THE GENEROUS HUNTER","MY STEPMOTHER'S DAUGHTER","THE HEADMASTER SECRET","FORGOTTEN PROMISE","THE MARKET GIRL","THE LIBRARY SECRET","DEATH OF NO RETURN","FOREST OF NO RETURN","SHATTERED VOWS"];
+let ps=document.getElementById('posterSelect');posters.forEach((t,i)=>{ps.innerHTML+=`<option value="static_${i}">${t}</option>`});
+function post(){
+ let title=document.getElementById('title').value;let desc=document.getElementById('desc').value;
+ let story=document.getElementById('story').value;let cat=document.getElementById('category').value;
+ let file=document.getElementById('image').files[0];if(!title||!story){alert("Add title & story");return;}
+ let movies=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");
+ let id="custom_"+Date.now();
+ let reader=new FileReader();reader.onload=function(e){
+   let img=e.target.result;
+   movies.push({id,title,desc,story,image:img,category:cat});
+   localStorage.setItem('zeenatflix_movies',JSON.stringify(movies));
+   let posterStories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");posterStories[id]=story;
+   localStorage.setItem('zeenat_poster_stories',JSON.stringify(posterStories));
+   if(img){localStorage.setItem('zeenat_poster_img_'+id,img);}
+   alert("Posted to "+cat.toUpperCase()+"! ✅");location.reload();
+ };
+ if(file){reader.readAsDataURL(file);}else{
+   let img="https://via.placeholder.com/300x400?text="+encodeURIComponent(title);
+   movies.push({id,title,desc,story,image:img,category:cat});
+   localStorage.setItem('zeenatflix_movies',JSON.stringify(movies));
+   let posterStories=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");posterStories[id]=story;
+   localStorage.setItem('zeenat_poster_stories',JSON.stringify(posterStories));
+   alert("Posted to "+cat.toUpperCase()+"! ✅");location.reload();
+ }
+}
+function changePoster(){
+ let pid=document.getElementById('posterSelect').value;let file=document.getElementById('posterImage').files[0];
+ if(!file){alert("Select image");return;}let r=new FileReader();r.onload=function(e){
+  localStorage.setItem('zeenat_poster_img_'+pid,e.target.result);alert("Poster Changed! ✅");};r.readAsDataURL(file);
+}
+function loadList(){
+ let movies=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");let h="";
+ movies.forEach(m=>{h+=`<div class="card">${m.title} - ${m.category.toUpperCase()} - <button onclick="del('${m.id}')" style="width:auto;padding:5px 10px;background:red;color:#fff">DELETE</button></div>`;});
+ document.getElementById('list').innerHTML=h;
+}
+function del(id){let movies=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");movies=movies.filter(m=>m.id!=id);localStorage.setItem('zeenatflix_movies',JSON.stringify(movies));let ps=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");delete ps[id];localStorage.setItem('zeenat_poster_stories',JSON.stringify(ps));localStorage.removeItem('zeenat_poster_img_'+id);loadList();}
+loadList();
+</script></body></html>
