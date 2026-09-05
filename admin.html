@@ -1,0 +1,133 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADMIN PRO MAX - 1 to 19</title>
+<style>
+body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:10px}
+.header{background:linear-gradient(90deg,#ff8a00,#ff0080);padding:16px;text-align:center;border-radius:16px;margin-bottom:12px}
+.header h1{margin:0;font-size:22px;font-weight:900}
+.links{margin-top:8px;background:rgba(0,0,0,0.3);padding:8px 12px;border-radius:20px;display:inline-block}
+.links a{color:#fff;text-decoration:none;font-weight:800;margin:0 8px;font-size:13px}
+.card{background:#151515;border-radius:16px;padding:14px;margin-bottom:12px;border:1px solid #222}
+input,textarea,select{width:100%;padding:13px;border-radius:10px;border:none;margin:6px 0;background:#2a2a2a;color:#fff;box-sizing:border-box}
+button{padding:12px;border:none;border-radius:25px;font-weight:900;cursor:pointer;margin:4px 2px}
+.btn-login{background:linear-gradient(90deg,#ff8a00,#ff0080);color:#fff;width:100%;padding:15px}
+.btn-post{background:linear-gradient(90deg,#ff1493,#ff8a00);color:#fff;width:100%;padding:16px;font-size:16px;margin-top:10px}
+.voiceBtn{background:#2a2a2a;color:#fff;padding:10px 5px;font-size:11px;border-radius:10px;border:1px solid #333;flex:1}
+.voiceBtn.active{background:#ff1493}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.small{font-size:11px;color:#aaa}
+.subBox{background:#000;border-radius:10px;padding:12px;color:#ffeb3b;text-align:center;min-height:40px;border:1px solid #333}
+#mainBox{display:none}
+#previewImg{width:100%;max-height:250px;object-fit:cover;border-radius:10px;margin-top:8px;display:none}
+</style>
+</head><body>
+<div class="header">
+<h1>👑 ADMIN PRO MAX - 1 TO 19</h1>
+<div class="links"><a href="index.html">🏠 Home</a> | <a href="world.html">🌍 World</a> | <a href="#" onclick="logout()">🚪 Logout</a></div>
+</div>
+
+<div id="loginBox" class="card">
+<h3>🔐 CEO Login</h3>
+<input type="password" id="pass" placeholder="Enter CEO Password ••••">
+<button class="btn-login" onclick="login()">🔓 LOGIN</button>
+<p class="small">Password hidden with •••• dots - nobody can see!</p>
+</div>
+
+<div id="mainBox">
+<div class="card">
+<h3>📝 Add Story to Poster 1 to 19</h3>
+<select id="mode"><option>Add to Existing Poster</option><option>Create New Poster</option></select>
+<select id="pSelect" onchange="previewPoster()"></select>
+<img id="previewImg">
+<input id="title" placeholder="Title e.g. THE STOLEN BABY">
+<input id="shortDesc" placeholder="Short Description">
+<label class="small">📸 Choose Image From Phone Gallery (only for new poster)</label>
+<input type="file" accept="image/*" onchange="handleImage(this)">
+<input type="hidden" id="imgData">
+<textarea id="storyText" rows="10" placeholder="Full story... Use KING: Hello... QUEEN: My son... AMARA: I revenge..."></textarea>
+<button class="btn-post" onclick="postToBoth()">💾 POST TO WORLD + HOME</button>
+<p class="small" style="color:#00ff88">✅ Posters 1 to 19 - Maintains all - No deletion!</p>
+</div>
+
+<div class="card">
+<h3>🎬 Subtitles</h3>
+<label><input type="checkbox" id="showSub" checked> Show Subtitles</label>
+<div id="subDisplay" class="subBox">Subtitles will appear here...</div>
+</div>
+
+<div class="card">
+<h3>🎙️ 20 Real African Voices + Languages</h3>
+<select id="lang">
+<option value="en-GH">🇬🇭 Ghana English</option>
+<option value="en-NG">🇳🇬 Nigeria English</option>
+<option value="en-GB">🇬🇧 British English</option>
+<option value="en-US">🇺🇸 UK English</option>
+<option value="ig-NG">Igbo</option>
+<option value="yo-NG">Yoruba</option>
+<option value="ha-NG">Hausa</option>
+<option value="tw-GH">Twi</option>
+</select>
+<div class="grid2" style="margin-top:8px">
+<button class="voiceBtn" onclick="setVoice(0)">Narrator Male</button>
+<button class="voiceBtn active" onclick="setVoice(1)">Narrator Female</button>
+<button class="voiceBtn" onclick="setVoice(2)">King Deep</button>
+<button class="voiceBtn" onclick="setVoice(3)">Queen Mother</button>
+<button class="voiceBtn" onclick="setVoice(4)">Prince</button>
+<button class="voiceBtn" onclick="setVoice(5)">Princess Amara</button>
+<button class="voiceBtn" onclick="setVoice(6)">Old Chief</button>
+<button class="voiceBtn" onclick="setVoice(7)">Old Woman</button>
+<button class="voiceBtn" onclick="setVoice(8)">Boy Child</button>
+<button class="voiceBtn" onclick="setVoice(9)">Girl Child</button>
+<button class="voiceBtn" onclick="setVoice(10)">Guard Deep</button>
+<button class="voiceBtn" onclick="setVoice(11)">Maid Soft</button>
+<button class="voiceBtn" onclick="setVoice(12)">Pastor Male</button>
+<button class="voiceBtn" onclick="setVoice(13)">Warrior Male</button>
+<button class="voiceBtn" onclick="setVoice(14)">Witch Female</button>
+<button class="voiceBtn" onclick="setVoice(15)">Husband</button>
+<button class="voiceBtn" onclick="setVoice(16)">Wife</button>
+<button class="voiceBtn" onclick="setVoice(17)">Friend Male</button>
+<button class="voiceBtn" onclick="setVoice(18)">Friend Female</button>
+<button class="voiceBtn" onclick="setVoice(19)">Crying Girl</button>
+</div>
+<div class="grid2" style="margin-top:10px">
+<button style="background:#00ff88;color:#000;width:100%" onclick="playAll()">▶️ PLAY ALL</button>
+<button style="background:#ffaa00;color:#000;width:100%" onclick="pauseVoice()">⏸️ PAUSE</button>
+</div>
+<div class="grid2">
+<button style="background:#ff4458;color:#fff;width:100%" onclick="stopVoice()">⏹️ STOP</button>
+<button style="background:#333;color:#fff;width:100%" onclick="testVoices()">🔊 TEST 20</button>
+</div>
+</div>
+
+<div class="card"><h3>📚 Saved</h3><div id="list" class="small"></div></div>
+</div>
+
+<script>
+const PASS="Papaja6869$$";
+const posters=["static_1","static_2","static_3","static_4","static_5","static_6","static_7","static_8","static_9","static_10","static_11","static_12","static_13","static_14","static_15","static_16","static_17","static_18","static_19","world_1","world_2","world_3","world_4"];
+let curVoice=1;
+const voiceConfig=[{p:0.8,r:0.85},{p:1.3,r:1.05},{p:0.6,r:0.8},{p:1.1,r:0.9},{p:0.9,r:1.1},{p:1.4,r:1.15},{p:0.5,r:0.7},{p:1.0,r:0.85},{p:1.5,r:1.3},{p:1.6,r:1.35},{p:0.55,r:0.75},{p:1.35,r:1.2},{p:0.75,r:0.9},{p:0.65,r:0.9},{p:0.9,r:0.8},{p:0.85,r:0.95},{p:1.25,r:1.05},{p:0.95,r:1.0},{p:1.2,r:1.1},{p:1.7,r:1.25}];
+function login(){if(document.getElementById('pass').value===PASS){document.getElementById('loginBox').style.display='none';document.getElementById('mainBox').style.display='block';init();localStorage.setItem('admin_ok','1');}else alert('Wrong Password');}
+function logout(){localStorage.removeItem('admin_ok');location.reload();}
+if(localStorage.getItem('admin_ok')=='1'){document.getElementById('loginBox').style.display='none';document.getElementById('mainBox').style.display='block';init();}
+function init(){
+let s=document.getElementById('pSelect');s.innerHTML='';
+let defaultTitles={
+"static_1":"THE STOLEN BABY","static_2":"AMARA REVENGE","static_3":"KING AND THE SERVANT",
+"static_4":"THE CURSED PRINCESS","static_5":"BLOOD MONEY","static_6":"VILLAGE QUEEN",
+"static_7":"THE LOST SON","static_8":"WITCH CRAFT","static_9":"ROYAL MARRIAGE",
+"static_10":"THE ORPHAN GIRL","static_11":"CHIEF'S DAUGHTER","static_12":"LOVE AND BETRAYAL",
+"static_13":"THE TWINS","static_14":"SACRIFICE","static_15":"THE RETURN OF AMARA",
+"static_16":"PALACE SECRET","static_17":"GHANA JOLLOF DRAMA","static_18":"MY HUSBAND'S WIFE",
+"static_19":"END OF EVIL","world_1":"WORLD DRAMA 1","world_2":"WORLD DRAMA 2","world_3":"WORLD DRAMA 3","world_4":"WORLD DRAMA 4"
+};
+posters.forEach(id=>{
+let o=document.createElement('option');o.value=id;
+let saved=localStorage.getItem('zeenat_poster_title_'+id);
+let title=saved || defaultTitles[id] || id;
+o.text=title+' ('+id+') - '+(id.includes('world')?'World':'Ghana');
+s.appendChild(o);
+});renderList();
+}
+function handleImage(input){let f=input.files[0];if(!f)return;let r=new FileReader();r.onload=e=>{document.getElementById('imgData').value=e.target.result;let img=document.getElementById('previewImg');img.src=e.target.result;img.style.display='block';};r.readAsDataURL(f);}
+function previewPoster(){
+let id
