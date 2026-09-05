@@ -1,0 +1,144 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Zeenatflix Admin Pro</title><style>body{background:#0a0a0a;color:#fff;font-family:Arial;padding:12px;margin:0}.h{background:linear-gradient(90deg,#ff1493,orange);padding:14px;border-radius:12px;text-align:center;font-weight:bold;font-size:18px}.card{background:#1e1e1e;padding:14px;border-radius:12px;margin:10px 0}input,textarea,select{width:100%;padding:12px;border-radius:8px;border:none;background:#2a2a2a;color:#fff;margin:6px 0;box-sizing:border-box}imgPrev{width:100%;max-height:250px;object-fit:cover;border-radius:10px;margin:8px 0;display:none}.btn{padding:12px;border:none;border-radius:25px;font-weight:bold;cursor:pointer;width:100%;margin:5px 0}.save{background:#ff1493;color:#fff}.play{background:#00ff9d;color:#000}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}.voiceBtn{background:#2a2a2a;color:#fff;padding:10px;border-radius:10px;border:1px solid #333;cursor:pointer;font-size:12px}.voiceBtn.active{background:#ff1493;border-color:#ff1493}.subBox{background:#000;color:#ffeb3b;padding:10px;border-radius:8px;text-align:center;min-height:40px;margin:8px 0;border:1px solid #333;font-size:14px}</style></head><body>
+<div id="login" style="text-align:center;margin-top:80px"><div class="h">👑 ZEENATFLIX ADMIN</div><div class="card"><input id="pwd" type="password" placeholder="Enter Password"><button class="btn save" onclick="login()">Login</button></div></div>
+
+<div id="panel" style="display:none">
+<div class="h">👑 ADMIN - PRO MAX</div>
+
+<div class="card">
+<h3>📝 Create / Add Story to World+Home</h3>
+<select id="mode" onchange="toggleMode()"><option value="old">Add to Existing Poster</option><option value="new">Create NEW Story (with your photo)</option></select>
+<select id="sel"></select>
+<input id="t" placeholder="Story Title e.g. AMARA REVENGE">
+<textarea id="desc" rows="2" placeholder="Short Description e.g. She returned to revenge..."></textarea>
+<textarea id="s" rows="10" placeholder="Write full story... Use KING: Hello my daughter... for different voices"></textarea>
+
+<div id="newBox" style="display:none">
+<label style="color:#ff1493">📸 Choose Image from Phone Gallery:</label>
+<input type="file" id="imgFile" accept="image/*" onchange="previewImg(event)">
+<img id="prev" class="imgPrev">
+<input id="imgUrl" placeholder="Or paste image link (optional)">
+</div>
+
+<button class="btn save" onclick="saveStory()">💾 POST TO WORLD + HOME</button>
+</div>
+
+<div class="card">
+<h3>🎬 Subtitles (Live)</h3>
+<label><input type="checkbox" id="subOn" checked> Show Subtitles</label>
+<div id="subtitles" class="subBox">Subtitles will appear here when playing...</div>
+</div>
+
+<div class="card">
+<h3>🎙️ 20 REAL African Voices</h3>
+<select id="lang">
+<option value="en-GH">🇬🇭 Ghana English</option>
+<option value="en-NG">🇳🇬 Nigeria English</option>
+<option value="en-GB">🇬🇧 British English</option>
+<option value="en-US">🇺🇸 US English</option>
+<option value="ig-NG">Igbo</option>
+<option value="yo-NG">Yoruba</option>
+<option value="ha-NG">Hausa</option>
+<option value="sw-KE">Swahili</option>
+</select>
+
+<div class="grid2" style="margin-top:8px">
+<button class="voiceBtn" onclick="setVoice(0)">🎙️ Narrator Male</button>
+<button class="voiceBtn" onclick="setVoice(1)">🎤 Narrator Female</button>
+<button class="voiceBtn" onclick="setVoice(2)">👑 King Deep Male</button>
+<button class="voiceBtn" onclick="setVoice(3)">👸 Queen Mother</button>
+<button class="voiceBtn" onclick="setVoice(4)">🤴 Prince Young Male</button>
+<button class="voiceBtn" onclick="setVoice(5)">👧 Princess Amara</button>
+<button class="voiceBtn" onclick="setVoice(6)">👴 Old Man Chief</button>
+<button class="voiceBtn" onclick="setVoice(7)">👵 Old Woman</button>
+<button class="voiceBtn" onclick="setVoice(8)">👦 Boy Child</button>
+<button class="voiceBtn" onclick="setVoice(9)">👧 Girl Child</button>
+<button class="voiceBtn" onclick="setVoice(10)">💂 Guard Deep Voice</button>
+<button class="voiceBtn" onclick="setVoice(11)">🧹 Maid Soft Female</button>
+<button class="voiceBtn" onclick="setVoice(12)">⛪ Pastor Male</button>
+<button class="voiceBtn" onclick="setVoice(13)">⚔️ Warrior Male</button>
+<button class="voiceBtn" onclick="setVoice(14)">🧙 Witch Female</button>
+<button class="voiceBtn" onclick="setVoice(15)">👨 Husband</button>
+<button class="voiceBtn" onclick="setVoice(16)">👩 Wife</button>
+<button class="voiceBtn" onclick="setVoice(17)">👨‍🦱 Friend Male</button>
+<button class="voiceBtn" onclick="setVoice(18)">👩‍🦰 Friend Female</button>
+<button class="voiceBtn" onclick="setVoice(19)">😢 Crying Girl</button>
+</div>
+
+<div class="grid2" style="margin-top:12px">
+<button class="btn play" onclick="playAll()">▶️ PLAY ALL</button>
+<button class="btn" style="background:orange;color:#000" onclick="speechSynthesis.pause()">⏸️ PAUSE</button>
+<button class="btn" style="background:#ff4757;color:#fff" onclick="stopAll()">⏹️ STOP</button>
+<button class="btn" style="background:#2a2a2a;color:#fff" onclick="testVoices()">🔊 TEST 20 Voices</button>
+</div>
+</div>
+
+<div class="card"><h3>📊 Stats</h3><div id="stats" style="font-size:13px;line-height:1.6"></div><button class="btn" style="background:#2a2a2a" onclick="loadStats()">Refresh</button></div>
+
+<a href="index.html" style="color:#ff1493;display:block;text-align:center;margin:15px">⬅️ Home</a>
+<button class="btn" style="background:#222" onclick="localStorage.removeItem('za');location.reload()">Logout</button>
+</div>
+
+<script>
+const PASS="Papaja6869$$";
+function login(){if(document.getElementById('pwd').value===PASS){localStorage.setItem('za','1');show()}else alert('Wrong!')}
+const titles=["THE STOLEN BABY","MISSING BUT FOUND","SECRETS OF THE LETTER","THE SLAVE TRADE","THE ABANDONED HUTS","THE TWINS","AMARA","THE FOOD SELLER","THE WHITE MAN","THE RIVER BRIDE","THE GENEROUS HUNTER","MY STEPMOTHER'S DAUGHTER","THE HEADMASTER SECRET","FORGOTTEN PROMISE","THE MARKET GIRL","THE LIBRARY SECRET","DEATH OF NO RETURN","FOREST OF NO RETURN","SHATTERED VOWS"];
+let currentVoice=0; let imgData="";
+function show(){document.getElementById('login').style.display='none';document.getElementById('panel').style.display='block';let sel=document.getElementById('sel');sel.innerHTML="";titles.forEach((t,i)=>sel.innerHTML+=`<option value="static_${i}">${t}</option>`);let custom=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");custom.forEach(m=>sel.innerHTML+=`<option value="${m.id}">${m.title} (Custom)</option>`);loadStats();loadVoices()}
+if(localStorage.getItem('za')==='1')show();
+function toggleMode(){let m=document.getElementById('mode').value;document.getElementById('newBox').style.display=m==='new'?'block':'none'}
+function previewImg(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=function(ev){imgData=ev.target.result;document.getElementById('prev').src=imgData;document.getElementById('prev').style.display='block'};r.readAsDataURL(f)}
+function saveStory(){
+ let mode=document.getElementById('mode').value;
+ let title=document.getElementById('t').value.trim();
+ let desc=document.getElementById('desc').value.trim()||"Ghana Story";
+ let story=document.getElementById('s').value.trim();
+ if(!story)return alert("Write story!");
+ if(mode==='old'){
+   let id=document.getElementById('sel').value;
+   if(!title)title=titles[parseInt(id.replace('static_',''))]||"Story";
+   let map=JSON.parse(localStorage.getItem('zeenat_poster_stories')||"{}");map[id]=story;localStorage.setItem('zeenat_poster_stories',JSON.stringify(map));
+   let movies=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");let ex=movies.find(m=>m.id===id);if(!ex){movies.push({id,title,desc,story,image:titles[parseInt(id.replace('static_',''))]?.replace(/\s/g,'-')+".jpg"||""});localStorage.setItem('zeenatflix_movies',JSON.stringify(movies))}
+   alert("✅ Posted to World + Home! ID: "+id);
+ }else{
+   if(!title)return alert("Enter Title for new story!");
+   let img=document.getElementById('imgUrl').value||imgData||"https://via.placeholder.com/600x400/1e1e1e/ff1493?text="+encodeURIComponent(title);
+   if(!imgData && !document.getElementById('imgUrl').value)img=imgData||img;
+   let movies=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");
+   let id="custom_"+Date.now();
+   movies.push({id,title,desc,story,image:imgData||img});
+   localStorage.setItem('zeenatflix_movies',JSON.stringify(movies));
+   alert("✅ NEW Story Created! Will appear in Home & World!");
+ }
+}
+let voices=[];function loadVoices(){voices=speechSynthesis.getVoices();if(!voices.length)setTimeout(loadVoices,500)}
+speechSynthesis.onvoiceschanged=loadVoices;
+const voiceProfiles=[{r:0.9,p:0.6},{r:1.1,p:1.4},{r:0.8,p:0.3},{r:1.0,p:1.2},{r:1.1,p:0.9},{r:1.2,p:1.5},{r:0.7,p:0.4},{r:0.9,p:1.1},{r:1.3,p:1.6},{r:1.4,p:1.7},{r:0.8,p:0.2},{r:1.1,p:1.4},{r:0.9,p:0.7},{r:0.8,p:0.5},{r:1.0,p:1.3},{r:0.9,p:0.8},{r:0.9,p:1.0},{r:1.2,p:1.2},{r:1.3,p:1.5}];
+function setVoice(i){currentVoice=i;document.querySelectorAll('.voiceBtn').forEach((b,idx)=>b.classList.toggle('active',idx===i))}
+function getAfricanVoice(lang){if(!voices.length)loadVoices();let v=voices.find(x=>x.lang===lang)||voices.find(x=>x.lang.startsWith(lang.split('-')[0]))||voices.find(x=>x.lang.includes('en-GH')||x.lang.includes('en-NG'))||voices.find(x=>x.lang.startsWith('en'))||voices[0];return v}
+function speak(text, prof){
+ speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);
+ u.lang=document.getElementById('lang').value;let v=getAfricanVoice(u.lang);if(v)u.voice=v;
+ u.rate=prof.r;u.pitch=prof.p;u.volume=1;
+ u.onboundary=function(e){if(document.getElementById('subOn').checked){let sub=text.substring(0,e.charIndex+ e.charLength||50);document.getElementById('subtitles').innerText=sub.slice(-120)}}
+ u.onend=function(){document.getElementById('subtitles').innerText="✅ Finished"}
+ return u;
+}
+function playAll(){
+ let txt=document.getElementById('s').value;if(!txt)return alert("Write story!");
+ let lang=document.getElementById('lang').value;
+ let lines=txt.split('\n');let idx=0;
+ function next(){
+  if(idx>=lines.length){document.getElementById('subtitles').innerText="✅ Done - All lines played";return}
+  let line=lines[idx].trim();if(!line){idx++;next();return}
+  if(document.getElementById('subOn').checked)document.getElementById('subtitles').innerText=line;
+  let prof=voiceProfiles[currentVoice]||{r:1,p:1};
+  let u=speechSynthesis.getVoices().length?new SpeechSynthesisUtterance(line):new SpeechSynthesisUtterance(line);
+  u.lang=lang;let v=getAfricanVoice(lang);if(v)u.voice=v;u.rate=prof.r;u.pitch=prof.p;
+  u.onend=function(){idx++;next()};speechSynthesis.speak(u);
+ }
+ speechSynthesis.cancel();next();
+}
+function stopAll(){speechSynthesis.cancel();document.getElementById('subtitles').innerText="⏹️ Stopped"}
+function testVoices(){let t="Hello, I am voice number";let i=0;function nxt(){if(i>=20)return;setVoice(i);let u=new SpeechSynthesisUtterance(t+" "+(i+1));u.lang=document.getElementById('lang').value;let v=getAfricanVoice(u.lang);if(v)u.voice=v;u.rate=voiceProfiles[i].r;u.pitch=voiceProfiles[i].p;u.onend=function(){i++;setTimeout(nxt,400)};speechSynthesis.speak(u)};nxt()}
+function loadStats(){let v=JSON.parse(localStorage.getItem('zeenat_views')||"{}");let l=JSON.parse(localStorage.getItem('zeenat_likes')||"{}");let c=JSON.parse(localStorage.getItem('zeenat_comments')||"{}");let h="";titles.forEach((t,i)=>{let id="static_"+i;h+=`${t}: 👁️${v[id]||0} ❤️${l[id]||0} 💬${(c[id]||[]).length}<br>`});let custom=JSON.parse(localStorage.getItem('zeenatflix_movies')||"[]");custom.forEach(m=>{h+=`${m.title}: 👁️${v[m.id]||0} ❤️${l[m.id]||0} 💬${(c[m.id]||[]).length}<br>`});document.getElementById('stats').innerHTML=h||"No stats"}
+</script></body></html>
